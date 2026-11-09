@@ -6,47 +6,50 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   return (
-    <footer className="w-full bg-[#0e0e0e] border-t border-[#1c1b1b] py-12">
-      <div className="w-full px-5 md:px-12 flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="flex items-center gap-3">
-          <span className="font-['Space_Grotesk'] text-xl font-bold tracking-wider text-white uppercase">
-            CINEVA
-          </span>
-          <span className="hidden md:inline text-[#5a4136]">|</span>
-          <span className="font-['Geist'] text-xs text-[#e3bfb1]">
-            The Ultimate 70mm &amp; 3D Cinema Experience
+    <footer className="w-full bg-[#050505] border-t border-[#222222] py-14 mt-auto">
+      <div className="max-w-7xl mx-auto px-5 md:px-8 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#FF6500]" />
+            <span className="text-lg font-bold tracking-tight text-white uppercase">
+              CINEVA
+            </span>
+          </div>
+          <span className="hidden sm:inline text-[#222222]">|</span>
+          <span className="text-xs text-[#707070]">
+            The 70mm &amp; 3D Theatrical SaaS Platform
           </span>
         </div>
 
-        <nav className="flex flex-wrap items-center justify-center gap-6">
+        <nav className="flex flex-wrap items-center justify-center gap-6 text-xs text-[#A0A0A0]">
           <button
             onClick={() => onNavigate('movies')}
-            className="font-['Geist'] text-xs text-[#e3bfb1] hover:text-white transition-colors"
+            className="hover:text-white transition-colors"
           >
             Movies
           </button>
           <button
             onClick={() => onNavigate('cinemas')}
-            className="font-['Geist'] text-xs text-[#e3bfb1] hover:text-white transition-colors"
+            className="hover:text-white transition-colors"
           >
             Cinemas
           </button>
           <button
             onClick={() => onNavigate('my-bookings')}
-            className="font-['Geist'] text-xs text-[#e3bfb1] hover:text-white transition-colors"
+            className="hover:text-white transition-colors"
           >
             My Bookings
           </button>
-          <a href="#" className="font-['Geist'] text-xs text-[#e3bfb1] hover:text-white transition-colors">
-            Terms &amp; Conditions
+          <a href="#" className="hover:text-white transition-colors">
+            Terms of Service
           </a>
-          <a href="#" className="font-['Geist'] text-xs text-[#e3bfb1] hover:text-white transition-colors">
+          <a href="#" className="hover:text-white transition-colors">
             Privacy Policy
           </a>
         </nav>
 
-        <div className="font-['Geist'] text-[10px] text-[#aa8a7d] tracking-widest uppercase">
-          &copy; 2026 CINEVA ENTERTAINMENT LTD. ALL RIGHTS RESERVED.
+        <div className="text-[11px] text-[#707070] tracking-wider uppercase">
+          &copy; {new Date().getFullYear()} CINEVA LABS. ALL RIGHTS RESERVED.
         </div>
       </div>
     </footer>

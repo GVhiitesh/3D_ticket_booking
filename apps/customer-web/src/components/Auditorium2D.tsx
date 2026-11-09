@@ -35,20 +35,20 @@ export const Auditorium2D: React.FC<Auditorium2DProps> = ({
     const isWheelchair = Boolean(seat.isWheelchair);
 
     let btnStyle =
-      'bg-[#121926] text-slate-200 hover:bg-emerald-500/20 hover:border-emerald-400 border border-emerald-500/60 shadow-2xs';
+      'bg-[#181818] text-white hover:border-[#FF6500] hover:text-[#FF6500] border border-[#222222] shadow-xs';
 
     if (isSelected) {
       btnStyle =
-        'bg-[#ff5500] text-white shadow-[0_0_15px_#ff5500] border-transparent scale-110 z-10 font-bold';
+        'bg-[#FF6500] text-white shadow-[0_0_14px_rgba(255,101,0,0.6)] border-transparent scale-110 z-10 font-bold';
     } else if (isBooked) {
       btnStyle =
-        'bg-[#1a2130] text-slate-500 border border-white/5 cursor-not-allowed opacity-60';
+        'bg-[#0E0E0E] text-[#555555] border border-white/[0.04] cursor-not-allowed opacity-60';
     } else if (isHeld) {
       btnStyle =
-        'bg-[#b45309]/60 text-white opacity-75 cursor-not-allowed border-amber-500/40';
+        'bg-[#B94700]/30 text-white opacity-80 cursor-not-allowed border-amber-500/40';
     } else if (isWheelchair) {
       btnStyle =
-        'bg-[#0369a1]/25 text-sky-300 border border-sky-400/60 hover:bg-sky-500/30';
+        'bg-[#0284C7]/20 text-sky-400 border border-sky-500/40 hover:bg-sky-500/30';
     }
 
     return (
@@ -57,7 +57,7 @@ export const Auditorium2D: React.FC<Auditorium2DProps> = ({
         disabled={isBooked || isHeld}
         onClick={() => onToggleSeat(seat.seatCode)}
         title={`${seat.seatCode} (${seat.section || 'Auditorium'}, ${seat.tier}) - £${seat.price}`}
-        className={`w-[26px] h-[26px] sm:w-[28px] sm:h-[28px] shrink-0 rounded-[5px] text-[10px] font-['Geist'] font-medium flex items-center justify-center transition-all ${btnStyle}`}
+        className={`w-[26px] h-[26px] sm:w-[28px] sm:h-[28px] shrink-0 rounded-[5px] text-[10px] font-medium flex items-center justify-center transition-all ${btnStyle}`}
       >
         {isWheelchair ? (
           <span className="material-symbols-outlined text-[14px]">accessible</span>
@@ -69,36 +69,36 @@ export const Auditorium2D: React.FC<Auditorium2DProps> = ({
   };
 
   return (
-    <div className="w-full flex flex-col items-center py-6 px-4 sm:px-8 rounded-2xl border border-white/10 select-none overflow-x-auto shadow-[0_24px_70px_rgba(0,0,0,0.95)] bg-[#090d16] text-white">
+    <div className="w-full flex flex-col items-center py-6 px-4 sm:px-8 rounded-3xl border border-[#222222] select-none overflow-x-auto shadow-[0_24px_70px_rgba(0,0,0,0.95)] bg-[#0B0B0B] text-white">
       {/* 1. TOP TIER CATEGORY BADGE (MATCHING USER SCREENSHOT) */}
       <div className="w-full flex flex-col items-center mb-6">
-        <div className="flex items-center gap-2 px-5 py-1.5 rounded-full border border-white/10 bg-[#131926] shadow-md">
-          <span className="w-2 h-2 rounded-full bg-[#ff5500]" />
-          <span className="text-xs sm:text-sm font-['Space_Grotesk'] font-bold tracking-widest uppercase text-slate-200">
+        <div className="flex items-center gap-2 px-5 py-1.5 rounded-full border border-[#222222] bg-[#141414] shadow-sm">
+          <span className="w-2 h-2 rounded-full bg-[#FF6500]" />
+          <span className="text-xs sm:text-sm font-bold tracking-widest uppercase text-white">
             ₹300 ELITE 3D
           </span>
         </div>
-        <div className="w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-white/15 to-transparent mt-3" />
+        <div className="w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-[#222222] to-transparent mt-3" />
       </div>
 
       {/* 2. SECTION HEADERS & AISLE GUIDES */}
-      <div className="flex items-center justify-center gap-2 text-[10px] uppercase font-['Geist'] tracking-widest mb-4 min-w-[1080px]">
+      <div className="flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest mb-4 min-w-[1080px]">
         <span className="w-6 shrink-0" />
-        <span className="w-[196px] shrink-0 text-center py-1 px-2 rounded-md border border-white/5 bg-[#121824] text-slate-300 font-semibold">
+        <span className="w-[196px] shrink-0 text-center py-1 px-2 rounded-md border border-[#222222] bg-[#141414] text-[#A0A0A0] font-semibold">
           Left Section (6 Seats)
         </span>
-        <span className="w-7 shrink-0 text-[#ff7a00] font-bold text-[9px] tracking-normal flex items-center justify-center gap-0.5">
+        <span className="w-7 shrink-0 text-[#FF6500] font-bold text-[9px] tracking-normal flex items-center justify-center gap-0.5">
           <span>◀</span>
           <span>▶</span>
         </span>
-        <span className="w-[548px] shrink-0 text-center py-1 px-2 rounded-md border border-[#ff5500]/30 bg-[#ff5500]/10 text-[#ff8a3d] font-bold shadow-xs">
+        <span className="w-[548px] shrink-0 text-center py-1 px-2 rounded-md border border-[#FF6500]/30 bg-[#FF6500]/10 text-[#FF6500] font-bold shadow-xs">
           Center Section (Prime Focal Axis • 17 Seats)
         </span>
-        <span className="w-7 shrink-0 text-[#ff7a00] font-bold text-[9px] tracking-normal flex items-center justify-center gap-0.5">
+        <span className="w-7 shrink-0 text-[#FF6500] font-bold text-[9px] tracking-normal flex items-center justify-center gap-0.5">
           <span>◀</span>
           <span>▶</span>
         </span>
-        <span className="w-[228px] shrink-0 text-center py-1 px-2 rounded-md border border-white/5 bg-[#121824] text-slate-300 font-semibold">
+        <span className="w-[228px] shrink-0 text-center py-1 px-2 rounded-md border border-[#222222] bg-[#141414] text-[#A0A0A0] font-semibold">
           Right Section (6–7 Seats)
         </span>
         <span className="w-6 shrink-0" />
@@ -126,11 +126,11 @@ export const Auditorium2D: React.FC<Auditorium2DProps> = ({
             <React.Fragment key={rowName}>
               {/* Transverse Cross-Aisle Walkway between Row K and Row L */}
               {isWalkwayBefore && (
-                <div className="w-full flex items-center justify-center my-4 py-2 border-y border-white/10 bg-[#101624]/60 rounded-lg">
-                  <span className="text-[10px] uppercase tracking-[0.25em] font-['Geist'] text-slate-400 font-semibold flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[14px] text-[#ff5500]">stairs</span>
+                <div className="w-full flex items-center justify-center my-4 py-2 border-y border-[#222222] bg-[#111111] rounded-lg">
+                  <span className="text-[10px] uppercase tracking-[0.25em] text-[#707070] font-semibold flex items-center gap-2">
+                    <span className="material-symbols-outlined text-[14px] text-[#FF6500]">stairs</span>
                     <span>TRANSVERSE CROSS-AISLE WALKWAY &bull; EXECUTIVE &amp; STANDARD ROWS</span>
-                    <span className="material-symbols-outlined text-[14px] text-[#ff5500]">stairs</span>
+                    <span className="material-symbols-outlined text-[14px] text-[#FF6500]">stairs</span>
                   </span>
                 </div>
               )}
@@ -138,37 +138,37 @@ export const Auditorium2D: React.FC<Auditorium2DProps> = ({
               {/* Individual Row Container */}
               <div className="flex items-center justify-center gap-2">
                 {/* Row Letter Left */}
-                <span className="w-6 shrink-0 text-xs font-bold text-center font-['Space_Grotesk'] text-amber-300">
+                <span className="w-6 shrink-0 text-xs font-bold text-center text-[#FF6500]">
                   {rowName}
                 </span>
 
                 {/* Left Section Seats (Width preserved at 6 slots so indented rows hug the aisle) */}
-                <div className="w-[196px] shrink-0 flex items-center justify-end gap-1 p-1 rounded-lg border border-white/5 bg-[#101624]/50">
+                <div className="w-[196px] shrink-0 flex items-center justify-end gap-1 p-1 rounded-lg border border-[#222222] bg-[#111111]">
                   {leftSeats.map(renderSeatButton)}
                 </div>
 
                 {/* Left Radial Aisle */}
                 <div className="w-7 shrink-0 flex items-center justify-center">
-                  <div className="h-6 w-0.5 bg-gradient-to-b from-[#ff5500]/20 via-[#ff5500]/80 to-[#ff5500]/20" />
+                  <div className="h-6 w-0.5 bg-gradient-to-b from-[#FF6500]/20 via-[#FF6500]/80 to-[#FF6500]/20" />
                 </div>
 
                 {/* Center Section Seats */}
-                <div className="w-[548px] shrink-0 flex items-center justify-center gap-1 p-1 rounded-lg border border-white/10 bg-[#131b2c]/80 shadow-inner">
+                <div className="w-[548px] shrink-0 flex items-center justify-center gap-1 p-1 rounded-lg border border-[#222222] bg-[#141414] shadow-inner">
                   {centerSeats.map(renderSeatButton)}
                 </div>
 
                 {/* Right Radial Aisle */}
                 <div className="w-7 shrink-0 flex items-center justify-center">
-                  <div className="h-6 w-0.5 bg-gradient-to-b from-[#ff5500]/20 via-[#ff5500]/80 to-[#ff5500]/20" />
+                  <div className="h-6 w-0.5 bg-gradient-to-b from-[#FF6500]/20 via-[#FF6500]/80 to-[#FF6500]/20" />
                 </div>
 
                 {/* Right Section Seats (Width preserved at 6-7 slots starting from aisle) */}
-                <div className="w-[228px] shrink-0 flex items-center justify-start gap-1 p-1 rounded-lg border border-white/5 bg-[#101624]/50">
+                <div className="w-[228px] shrink-0 flex items-center justify-start gap-1 p-1 rounded-lg border border-[#222222] bg-[#111111]">
                   {rightSeats.map(renderSeatButton)}
                 </div>
 
                 {/* Row Letter Right */}
-                <span className="w-6 shrink-0 text-xs font-bold text-center font-['Space_Grotesk'] text-amber-300">
+                <span className="w-6 shrink-0 text-xs font-bold text-center text-[#FF6500]">
                   {rowName}
                 </span>
               </div>

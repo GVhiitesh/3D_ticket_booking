@@ -1,4 +1,6 @@
 import React from 'react';
+import { Button } from '../components/ui/Button';
+import { Badge } from '../components/ui/Badge';
 
 interface ProfilePageProps {
   currentUser: { name: string; email: string; phone?: string };
@@ -12,80 +14,82 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
   onGoToBookings,
 }) => {
   return (
-    <div className="w-full min-h-screen bg-[#050505] text-white pt-24 pb-20 px-5 md:px-12 flex justify-center">
+    <div className="w-full min-h-screen bg-[#050505] text-white pt-28 pb-20 px-5 md:px-12 flex justify-center">
       <div className="w-full max-w-4xl flex flex-col gap-8">
-        {/* Profile Header */}
-        <div className="p-8 rounded-3xl bg-[#111111] border border-white/5 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+        {/* Profile Card Header */}
+        <div className="p-8 rounded-3xl bg-[#111111] border border-[#222222] shadow-card-subtle flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div className="flex items-center gap-5">
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#ff6500] to-[#b74600] flex items-center justify-center text-white text-3xl font-bold font-['Space_Grotesk'] shadow-[0_0_25px_rgba(255,101,0,0.5)]">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#181818] border border-[#222222] text-[#FF6500] flex items-center justify-center text-3xl font-bold shadow-sm">
               {currentUser.name.charAt(0)}
             </div>
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full bg-[#ff6500]/20 text-[#ff6500] text-[10px] font-bold uppercase tracking-wider font-['Geist']">
+                <Badge variant="brand" size="sm">
                   Titanium Member
-                </span>
-                <span className="text-xs text-[#aa8a7d] font-['Geist']">Club ID: CNV-88219</span>
+                </Badge>
+                <span className="text-xs text-[#707070]">ID: CNV-88219</span>
               </div>
-              <h1 className="font-['Space_Grotesk'] text-2xl font-bold text-white">
+              <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
                 {currentUser.name}
               </h1>
-              <span className="text-xs text-[#e3bfb1] font-['Geist']">
+              <span className="text-xs text-[#A0A0A0]">
                 {currentUser.email} &bull; {currentUser.phone || '+44 7700 900123'}
               </span>
             </div>
           </div>
 
-          <button
+          <Button
             onClick={onLogout}
-            className="px-5 py-2.5 rounded-full bg-[#1c1b1b] hover:bg-[#2a2a2a] text-xs font-bold font-['Geist'] tracking-wider text-white border border-white/10 transition-colors"
+            variant="outline"
+            size="sm"
           >
             Sign Out
-          </button>
+          </Button>
         </div>
 
-        {/* Membership Tier & Loyalty Card */}
+        {/* Membership Tier & Loyalty Card Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-6 rounded-2xl bg-[#111111] border border-white/5 flex flex-col gap-2 shadow-lg">
-            <span className="text-xs text-[#aa8a7d] font-['Geist'] uppercase">Screenings Attended</span>
-            <span className="font-['Space_Grotesk'] text-3xl font-bold text-white">14</span>
-            <span className="text-[10px] text-[#ffb596] font-['Geist']">Across 3 CINEVA Flagships</span>
+          <div className="p-6 rounded-2xl bg-[#111111] border border-[#222222] flex flex-col gap-1.5 shadow-sm">
+            <span className="text-xs text-[#707070] uppercase font-semibold">Screenings Attended</span>
+            <span className="text-3xl font-bold text-white">14</span>
+            <span className="text-[11px] text-[#A0A0A0]">Across 3 CINEVA Flagships</span>
           </div>
 
-          <div className="p-6 rounded-2xl bg-[#111111] border border-white/5 flex flex-col gap-2 shadow-lg">
-            <span className="text-xs text-[#aa8a7d] font-['Geist'] uppercase">Preferred Experience</span>
-            <span className="font-['Space_Grotesk'] text-3xl font-bold text-[#ff6500]">IMAX 70mm</span>
-            <span className="text-[10px] text-[#e3bfb1] font-['Geist']">1.43:1 Harkness Silver Screen</span>
+          <div className="p-6 rounded-2xl bg-[#111111] border border-[#222222] flex flex-col gap-1.5 shadow-sm">
+            <span className="text-xs text-[#707070] uppercase font-semibold">Preferred Format</span>
+            <span className="text-3xl font-bold text-[#FF6500]">IMAX 70mm</span>
+            <span className="text-[11px] text-[#A0A0A0]">1.43:1 Harkness Silver Screen</span>
           </div>
 
-          <div className="p-6 rounded-2xl bg-[#111111] border border-white/5 flex flex-col gap-2 shadow-lg">
-            <span className="text-xs text-[#aa8a7d] font-['Geist'] uppercase">Patron Privileges</span>
-            <span className="font-['Space_Grotesk'] text-xl font-bold text-white">VIP Priority Hold</span>
-            <span className="text-[10px] text-[#ffb596] font-['Geist']">10-Min Extended Lock Window</span>
+          <div className="p-6 rounded-2xl bg-[#111111] border border-[#222222] flex flex-col gap-1.5 shadow-sm">
+            <span className="text-xs text-[#707070] uppercase font-semibold">Patron Privilege</span>
+            <span className="text-xl font-bold text-white">VIP Priority Hold</span>
+            <span className="text-[11px] text-[#A0A0A0]">10-Min Extended Lock Window</span>
           </div>
         </div>
 
-        {/* Quick Shortcuts */}
-        <div className="p-6 rounded-2xl bg-[#111111] border border-white/5 flex items-center justify-between shadow-xl">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#ff6500]/15 flex items-center justify-center text-[#ff6500]">
+        {/* Quick Shortcut Card */}
+        <div className="p-6 rounded-2xl bg-[#111111] border border-[#222222] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-card-subtle">
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-[#181818] border border-[#222222] flex items-center justify-center text-[#FF6500]">
               <span className="material-symbols-outlined text-[22px]">confirmation_number</span>
             </div>
             <div>
-              <h3 className="font-['Space_Grotesk'] text-base font-bold text-white">
+              <h3 className="text-base font-semibold text-white">
                 View Your Digital Passes
               </h3>
-              <p className="text-xs text-[#e3bfb1] font-['Geist']">
-                Access upcoming QR check-in tickets and booking history.
+              <p className="text-xs text-[#A0A0A0]">
+                Access upcoming QR check-in tickets and your past cinema bookings.
               </p>
             </div>
           </div>
-          <button
+          <Button
             onClick={onGoToBookings}
-            className="px-5 py-2.5 rounded-full bg-[#ff6500] hover:bg-[#b74600] text-white text-xs font-bold uppercase transition-all shadow-md"
+            variant="primary"
+            size="md"
           >
-            Open Wallet
-          </button>
+            Open Ticket Wallet &rarr;
+          </Button>
         </div>
       </div>
     </div>

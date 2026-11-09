@@ -1,5 +1,7 @@
 import React from 'react';
 import { Booking } from '../types';
+import { Button } from '../components/ui/Button';
+import { Badge } from '../components/ui/Badge';
 
 interface ConfirmationPageProps {
   booking: Booking;
@@ -13,69 +15,70 @@ export const ConfirmationPage: React.FC<ConfirmationPageProps> = ({
   onGoHome,
 }) => {
   return (
-    <div className="w-full min-h-screen bg-[#050505] text-white pt-24 pb-20 px-5 md:px-12 flex justify-center">
+    <div className="w-full min-h-screen bg-[#050505] text-white pt-28 pb-20 px-5 md:px-12 flex justify-center">
       <div className="w-full max-w-3xl flex flex-col items-center gap-8">
         {/* Success Icon & Heading */}
         <div className="flex flex-col items-center text-center gap-3">
-          <div className="w-16 h-16 rounded-full bg-[#ff6500]/20 flex items-center justify-center text-[#ff6500] shadow-[0_0_30px_rgba(255,101,0,0.4)]">
-            <span className="material-symbols-outlined text-[36px]">check_circle</span>
+          <div className="w-16 h-16 rounded-2xl bg-[#FF6500]/15 border border-[#FF6500]/30 flex items-center justify-center text-[#FF6500] shadow-glow-orange-sm">
+            <span className="material-symbols-outlined text-[32px]">check_circle</span>
           </div>
-          <span className="text-xs text-[#ff6500] font-['Geist'] tracking-[0.25em] uppercase font-bold">
+          <span className="text-xs text-[#FF6500] font-semibold tracking-wider uppercase">
             Reservation Confirmed
           </span>
-          <h1 className="font-['Space_Grotesk'] text-3xl md:text-5xl font-bold uppercase tracking-tight text-white">
-            You're Going to the Movies!
+          <h1 className="text-3xl sm:text-4xl font-bold uppercase tracking-tight text-white">
+            You're Going to the Movies
           </h1>
-          <p className="text-xs text-[#e3bfb1] font-['Geist']">
-            A confirmation receipt and digital ticket pass have been dispatched to{' '}
+          <p className="text-xs sm:text-sm text-[#A0A0A0] max-w-md">
+            A confirmation receipt and digital boarding pass have been dispatched to{' '}
             <strong className="text-white">{booking.customerEmail}</strong>.
           </p>
         </div>
 
-        {/* Digital Ticket Stub Card */}
-        <div className="w-full rounded-3xl bg-[#111111] border border-white/10 overflow-hidden shadow-2xl flex flex-col md:flex-row">
+        {/* Digital Ticket Pass Stub */}
+        <div className="w-full rounded-3xl bg-[#111111] border border-[#222222] overflow-hidden shadow-elevated-xl flex flex-col md:flex-row">
           {/* Left Column: Film & Screening Details */}
-          <div className="flex-1 p-6 md:p-8 flex flex-col justify-between gap-6 border-b md:border-b-0 md:border-r border-dashed border-white/10 relative">
-            {/* Upper Section */}
+          <div className="flex-1 p-6 sm:p-8 flex flex-col justify-between gap-6 border-b md:border-b-0 md:border-r border-dashed border-[#222222]">
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between">
-                <span className="px-3 py-1 rounded-full bg-[#ff6500]/20 text-[#ff6500] text-[10px] uppercase font-bold tracking-wider font-['Geist']">
+                <Badge variant="brand" size="sm">
                   {booking.screenFormat}
-                </span>
-                <span className="font-['Space_Grotesk'] text-sm font-mono text-[#ffb596] font-bold">
+                </Badge>
+                <span className="text-xs font-mono text-[#A0A0A0] font-bold">
                   REF: {booking.bookingReference}
                 </span>
               </div>
 
               <div>
-                <h2 className="font-['Space_Grotesk'] text-2xl md:text-3xl font-bold text-white uppercase tracking-tight">
+                <h2 className="text-2xl sm:text-3xl font-bold text-white uppercase tracking-tight">
                   {booking.movieTitle}
                 </h2>
-                <span className="text-xs text-[#e3bfb1] font-['Geist']">
+                <span className="text-xs text-[#A0A0A0]">
                   {booking.branchName} &bull; {booking.screenName}
                 </span>
               </div>
 
               {/* Timing Grid */}
-              <div className="grid grid-cols-2 gap-4 pt-2">
-                <div className="p-3 rounded-xl bg-[#1c1b1b]">
-                  <span className="text-[10px] text-[#aa8a7d] uppercase font-['Geist'] block">Screening Date</span>
-                  <strong className="text-xs text-white font-['Geist']">{booking.date}</strong>
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <div className="p-3 rounded-xl bg-[#181818] border border-[#222222]">
+                  <span className="text-[10px] text-[#707070] uppercase block">Screening Date</span>
+                  <strong className="text-xs text-white">{booking.date}</strong>
                 </div>
-                <div className="p-3 rounded-xl bg-[#1c1b1b]">
-                  <span className="text-[10px] text-[#aa8a7d] uppercase font-['Geist'] block">Curtain Call</span>
-                  <strong className="text-xs text-[#ff6500] font-['Geist']">{booking.showTime}</strong>
+                <div className="p-3 rounded-xl bg-[#181818] border border-[#222222]">
+                  <span className="text-[10px] text-[#707070] uppercase block">Curtain Call</span>
+                  <strong className="text-xs text-[#FF6500]">{booking.showTime}</strong>
                 </div>
               </div>
 
-              {/* Seats Pill Row */}
+              {/* Confirmed Seats Pills */}
               <div className="flex flex-col gap-1.5 pt-2">
-                <span className="text-[10px] text-[#aa8a7d] uppercase font-['Geist']">Confirmed Seats</span>
+                <span className="text-[10px] text-[#707070] uppercase font-semibold">
+                  Confirmed Seats ({booking.seatCodes.length})
+                </span>
                 <div className="flex flex-wrap gap-2">
                   {booking.seatCodes.map((code) => (
                     <span
                       key={code}
-                      className="px-3 py-1 rounded-lg bg-[#2a2a2a] text-[#ffb596] text-xs font-bold font-['Space_Grotesk'] border border-white/5"
+                      className="px-3 py-1 rounded-lg bg-[#181818] border border-[#222222] text-xs font-semibold text-white"
                     >
                       Seat {code}
                     </span>
@@ -85,66 +88,69 @@ export const ConfirmationPage: React.FC<ConfirmationPageProps> = ({
             </div>
 
             {/* Bottom Disclaimer */}
-            <div className="text-[10px] text-[#aa8a7d] font-['Geist'] pt-4 border-t border-white/5 flex items-center justify-between">
-              <span>Gate opens 20 mins prior to showtime</span>
-              <span className="text-white font-bold">Total: £{booking.totalAmount.toFixed(2)}</span>
+            <div className="text-[11px] text-[#707070] pt-4 border-t border-[#222222] flex items-center justify-between">
+              <span>Auditorium turnstiles open 20m before showtime</span>
+              <span className="text-white font-bold">Paid: £{booking.totalAmount.toFixed(2)}</span>
             </div>
           </div>
 
-          {/* Right Column: Scannable QR Code & Stub */}
-          <div className="w-full md:w-64 bg-[#0a0a0a] p-6 flex flex-col items-center justify-center text-center gap-4">
-            <span className="text-[10px] text-[#ff6500] font-['Geist'] uppercase tracking-widest font-bold">
-              Entry Pass QR
+          {/* Right Column: Scannable QR Code */}
+          <div className="w-full md:w-64 bg-[#0B0B0B] p-6 flex flex-col items-center justify-center text-center gap-4 border-t md:border-t-0 md:border-l border-[#222222]">
+            <span className="text-[10px] text-[#FF6500] uppercase tracking-wider font-semibold">
+              Auditorium Entry Pass
             </span>
 
-            {/* QR Code Container */}
-            <div className="p-2.5 rounded-2xl bg-white shadow-xl">
+            {/* QR Container */}
+            <div className="p-3 rounded-2xl bg-white shadow-xl">
               {booking.tickets[0]?.qrCodeDataUrl ? (
                 <img
                   alt="Entry Ticket QR"
                   src={booking.tickets[0].qrCodeDataUrl}
-                  className="w-40 h-40 object-contain"
+                  className="w-36 h-36 object-contain"
                 />
               ) : (
-                <div className="w-40 h-40 bg-black flex items-center justify-center text-white text-xs">
-                  QR Generated
+                <div className="w-36 h-36 bg-black flex items-center justify-center text-white text-xs">
+                  QR GENERATED
                 </div>
               )}
             </div>
 
             <div className="flex flex-col text-center">
               <span className="font-mono text-xs font-bold text-white tracking-wider">
-                {booking.tickets[0]?.ticketNumber || 'TKT-VALID'}
+                {booking.tickets[0]?.ticketNumber || 'TKT-VALID-2026'}
               </span>
-              <span className="text-[10px] text-[#aa8a7d] font-['Geist'] mt-0.5">
-                Scan at Auditorium Turnstile
+              <span className="text-[10px] text-[#707070] mt-0.5">
+                Scan at turnstile scanner
               </span>
             </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-          <button
+        <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+          <Button
             onClick={() => window.print()}
-            className="flex items-center gap-2 px-6 py-3 rounded-full bg-[#1c1b1b] hover:bg-[#2a2a2a] text-white text-xs font-bold tracking-wider uppercase transition-all border border-white/10"
+            variant="secondary"
+            size="md"
+            leftIcon={<span className="material-symbols-outlined text-[18px]">print</span>}
           >
-            <span className="material-symbols-outlined text-[18px]">print</span>
             Print Ticket / PDF
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={onGoToBookings}
-            className="flex items-center gap-2 px-8 py-3 rounded-full bg-[#ff6500] hover:bg-[#b74600] text-white text-xs font-bold tracking-wider uppercase transition-all shadow-[0_8px_25px_rgba(255,101,0,0.4)]"
+            variant="primary"
+            size="md"
+            leftIcon={<span className="material-symbols-outlined text-[18px]">confirmation_number</span>}
           >
-            <span className="material-symbols-outlined text-[18px]">confirmation_number</span>
             View in My Bookings
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={onGoHome}
-            className="text-xs text-[#e3bfb1] hover:text-white transition-colors"
+            variant="outline"
+            size="md"
           >
-            Return to Home
-          </button>
+            Back to Home
+          </Button>
         </div>
       </div>
     </div>

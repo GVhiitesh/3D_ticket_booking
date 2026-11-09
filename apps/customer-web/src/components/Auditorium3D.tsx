@@ -1440,21 +1440,21 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
       {/* Dynamic Sightline HUD Notification (When a seat is selected and viewing from that seat) */}
       {sightlineSeat && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
-          <div className="flex items-center gap-3 px-4 py-2 rounded-full backdrop-blur-2xl border border-[#ff5500]/50 shadow-[0_10px_35px_rgba(255,85,0,0.35)] animate-fade-in text-xs font-['Geist'] bg-[#0f1422]/95 text-white">
-            <span className="flex items-center gap-1.5 text-[#ff7a00] font-bold">
-              <span className="material-symbols-outlined text-[18px]">visibility</span>
+          <div className="flex items-center gap-3 px-4 py-2 rounded-full backdrop-blur-xl border border-[#FF6500]/40 shadow-[0_10px_35px_rgba(255,101,0,0.25)] animate-fade-in text-xs bg-[#111111]/95 text-white">
+            <span className="flex items-center gap-1.5 text-[#FF6500] font-semibold">
+              <span className="material-symbols-outlined text-[16px]">visibility</span>
               <span>Seat {sightlineSeat.seatCode} ({sightlineSeat.section || 'Auditorium'}) Sightline</span>
             </span>
             <span className="w-px h-4 bg-white/20" />
-            <span className="text-slate-300 font-medium">
+            <span className="text-[#A0A0A0] font-medium">
               {sightlineSeat.tier} • £{sightlineSeat.price.toFixed(2)}
             </span>
             <span className="w-px h-4 bg-white/20" />
             <button
               onClick={() => controlsRef.current?.reset()}
-              className="flex items-center gap-1 transition-colors hover:text-[#ff7a00] ml-1 font-semibold text-white cursor-pointer"
+              className="flex items-center gap-1 transition-colors hover:text-[#FF6500] ml-1 font-semibold text-white cursor-pointer"
             >
-              <span>Back to Overview</span>
+              <span>Reset</span>
               <span className="material-symbols-outlined text-[14px]">undo</span>
             </button>
           </div>
@@ -1464,25 +1464,25 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
       {/* Floating Seat Tooltip on Hover */}
       {hoveredSeat && !sightlineSeat && (
         <div
-          className="absolute pointer-events-none z-30 px-3 py-1.5 rounded-lg backdrop-blur-md border border-white/10 shadow-2xl text-xs font-['Geist'] flex flex-col gap-0.5 bg-[#0e1320]/95 text-white"
+          className="absolute pointer-events-none z-30 px-3.5 py-2 rounded-xl backdrop-blur-md border border-[#222222] shadow-[0_12px_40px_rgba(0,0,0,0.85)] text-xs flex flex-col gap-1 bg-[#111111]/95 text-white"
           style={{
             left: `${Math.min(window.innerWidth - 180, hoveredSeat.x + 15)}px`,
             top: `${Math.max(10, hoveredSeat.y - 65)}px`,
           }}
         >
           <div className="flex items-center gap-1.5 font-bold">
-            <span className="text-[#ff5500] font-['Space_Grotesk'] text-sm">{hoveredSeat.code}</span>
-            <span className="text-slate-400">&bull;</span>
+            <span className="text-[#FF6500] text-sm">{hoveredSeat.code}</span>
+            <span className="text-[#707070]">&bull;</span>
             <span className="text-white">
               {hoveredSeat.section ? `${hoveredSeat.section} Section` : hoveredSeat.tier}
             </span>
           </div>
-          <div className="flex items-center justify-between gap-3 text-[11px] text-slate-400">
+          <div className="flex items-center justify-between gap-3 text-[11px] text-[#A0A0A0]">
             <span>Price: £{hoveredSeat.price.toFixed(2)}</span>
             <span
               className={
                 hoveredSeat.status === 'SELECTED'
-                  ? 'text-[#ff7a00] font-bold'
+                  ? 'text-[#FF6500] font-semibold'
                   : hoveredSeat.status === 'BOOKED'
                   ? 'text-red-400 font-medium'
                   : 'text-emerald-400 font-medium'
@@ -1496,13 +1496,13 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
 
       {/* Camera Controls Toolbar */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 pointer-events-auto">
-        <div className="flex items-center gap-1.5 p-1.5 backdrop-blur-2xl rounded-full border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.85)] bg-[#0f1422]/95 text-white">
+        <div className="flex items-center gap-1.5 p-1.5 backdrop-blur-xl rounded-full border border-[#222222] shadow-[0_20px_50px_rgba(0,0,0,0.85)] bg-[#111111]/95 text-white">
           <button
             onClick={() => controlsRef.current?.setPreset('angle')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-['Geist'] font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
               activePreset === 'angle'
-                ? 'bg-gradient-to-r from-[#ff5500] to-[#ff7a00] text-white shadow-[0_0_15px_rgba(255,85,0,0.5)] font-semibold'
-                : 'text-slate-300 hover:text-white hover:bg-white/10'
+                ? 'bg-[#181818] text-white border border-[#FF6500]/50 shadow-sm font-semibold'
+                : 'text-[#A0A0A0] hover:text-white hover:bg-white/[0.04]'
             }`}
             title="3/4 Fan-Shaped Auditorium Angle View"
           >
@@ -1512,10 +1512,10 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
 
           <button
             onClick={() => controlsRef.current?.setPreset('screen')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-['Geist'] font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
               activePreset === 'screen'
-                ? 'bg-gradient-to-r from-[#ff5500] to-[#ff7a00] text-white shadow-[0_0_15px_rgba(255,85,0,0.5)] font-semibold'
-                : 'text-slate-300 hover:text-white hover:bg-white/10'
+                ? 'bg-[#181818] text-white border border-[#FF6500]/50 shadow-sm font-semibold'
+                : 'text-[#A0A0A0] hover:text-white hover:bg-white/[0.04]'
             }`}
             title="View from Centered Screen facing the Fan Seating Bowl"
           >
@@ -1536,10 +1536,10 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
               }
               controlsRef.current?.setPreset('pov');
             }}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-['Geist'] font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
               activePreset === 'pov' || activePreset.startsWith('seat-')
-                ? 'bg-gradient-to-r from-[#ff5500] to-[#ff7a00] text-white shadow-[0_0_15px_rgba(255,85,0,0.5)] font-semibold'
-                : 'text-slate-300 hover:text-white hover:bg-white/10'
+                ? 'bg-[#181818] text-white border border-[#FF6500]/50 shadow-sm font-semibold'
+                : 'text-[#A0A0A0] hover:text-white hover:bg-white/[0.04]'
             }`}
             title="Sightline View from Selected Seat facing Horizontally Centred Screen"
           >

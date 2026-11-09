@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Booking } from '../types';
+import { Button } from '../components/ui/Button';
+import { Badge } from '../components/ui/Badge';
+import { Modal } from '../components/ui/Modal';
+import { EmptyState } from '../components/ui/EmptyState';
 
 interface MyBookingsPageProps {
   onBookMore: () => void;
@@ -28,37 +32,37 @@ export const MyBookingsPage: React.FC<MyBookingsPageProps> = ({ onBookMore, curr
   }, [currentUser]);
 
   return (
-    <div className="w-full min-h-screen bg-[#050505] text-white pt-24 pb-20 px-5 md:px-12 flex justify-center">
-      <div className="w-full max-w-4xl flex flex-col gap-8">
+    <div className="w-full min-h-screen bg-[#050505] text-white pt-28 pb-20 px-5 md:px-12 flex justify-center">
+      <div className="w-full max-w-5xl flex flex-col gap-8">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div>
-            <span className="text-xs text-[#ff6500] font-['Geist'] tracking-[0.25em] uppercase font-bold">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div className="flex flex-col gap-1">
+            <span className="text-xs text-[#FF6500] font-semibold tracking-wider uppercase">
               Digital Ticket Wallet
             </span>
-            <h1 className="font-['Space_Grotesk'] text-3xl md:text-4xl font-bold tracking-tight text-white">
+            <h1 className="text-3xl font-bold tracking-tight text-white">
               My Bookings
             </h1>
           </div>
 
           {/* Tab Filter */}
-          <div className="flex items-center gap-2 p-1 rounded-xl bg-[#1c1b1b] border border-white/5">
+          <div className="flex items-center gap-1 p-1 rounded-full bg-[#111111] border border-[#222222]">
             <button
               onClick={() => setActiveTab('upcoming')}
-              className={`px-4 py-1.5 rounded-lg text-xs font-bold font-['Geist'] transition-all ${
+              className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
                 activeTab === 'upcoming'
-                  ? 'bg-[#ff6500] text-white shadow-[0_0_12px_rgba(255,101,0,0.3)]'
-                  : 'text-[#e3bfb1] hover:text-white'
+                  ? 'bg-[#181818] text-white border border-[#222222] shadow-sm'
+                  : 'text-[#A0A0A0] hover:text-white'
               }`}
             >
               Upcoming Screenings
             </button>
             <button
               onClick={() => setActiveTab('past')}
-              className={`px-4 py-1.5 rounded-lg text-xs font-bold font-['Geist'] transition-all ${
+              className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
                 activeTab === 'past'
-                  ? 'bg-[#ff6500] text-white shadow-[0_0_12px_rgba(255,101,0,0.3)]'
-                  : 'text-[#e3bfb1] hover:text-white'
+                  ? 'bg-[#181818] text-white border border-[#222222] shadow-sm'
+                  : 'text-[#A0A0A0] hover:text-white'
               }`}
             >
               Past Archive
@@ -68,90 +72,82 @@ export const MyBookingsPage: React.FC<MyBookingsPageProps> = ({ onBookMore, curr
 
         {/* Bookings List */}
         {bookings.length === 0 ? (
-          <div className="p-12 rounded-3xl bg-[#111111] border border-white/5 flex flex-col items-center justify-center text-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-[#1c1b1b] flex items-center justify-center text-[#ff6500]">
-              <span className="material-symbols-outlined text-[32px]">confirmation_number</span>
-            </div>
-            <h3 className="font-['Space_Grotesk'] text-xl font-bold text-white">No Bookings Found</h3>
-            <p className="text-xs text-[#e3bfb1] font-['Geist'] max-w-sm">
-              You haven't reserved any cinema tickets yet. Explore now-showing blockbusters in 70mm and IMAX.
-            </p>
-            <button
-              onClick={onBookMore}
-              className="mt-2 px-6 py-2.5 rounded-full bg-[#ff6500] hover:bg-[#b74600] text-white text-xs font-bold uppercase tracking-wider transition-all"
-            >
-              Explore Movies
-            </button>
-          </div>
+          <EmptyState
+            icon="confirmation_number"
+            title="No Bookings Found"
+            description="You haven't reserved any cinema tickets yet. Explore now-showing blockbusters in 70mm and IMAX."
+            actionLabel="Explore Movies"
+            onAction={onBookMore}
+          />
         ) : (
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
             {bookings.map((booking) => (
               <div
                 key={booking.id}
-                className="p-6 rounded-2xl bg-[#111111] border border-white/5 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-6 shadow-xl"
+                className="p-6 rounded-2xl bg-[#111111] border border-[#222222] hover:border-white/20 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-6 shadow-card-subtle transition-all"
               >
                 {/* Film Thumbnail & Info */}
                 <div className="flex items-center gap-4">
                   <img
                     alt={booking.movieTitle}
                     src={booking.moviePosterUrl}
-                    className="w-16 h-24 object-cover rounded-xl shadow-md"
+                    onError={(e) => {
+                      e.currentTarget.src =
+                        'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1000&auto=format&fit=crop';
+                    }}
+                    className="w-16 h-22 object-cover rounded-xl border border-white/5 shrink-0"
                   />
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 rounded bg-[#ff6500]/20 text-[#ff6500] text-[10px] font-bold uppercase font-['Geist']">
+                      <Badge variant="brand" size="sm">
                         {booking.screenFormat}
-                      </span>
-                      <span className="text-xs font-mono font-bold text-[#ffb596]">
-                        {booking.bookingReference}
+                      </Badge>
+                      <span className="text-[11px] font-mono text-[#707070]">
+                        REF: {booking.bookingReference}
                       </span>
                     </div>
-
-                    <h3 className="font-['Space_Grotesk'] text-xl font-bold text-white">
+                    <h3 className="text-lg font-bold text-white line-clamp-1">
                       {booking.movieTitle}
                     </h3>
-
-                    <span className="text-xs text-[#e3bfb1] font-['Geist']">
+                    <span className="text-xs text-[#A0A0A0]">
                       {booking.branchName} &bull; {booking.screenName}
                     </span>
-
-                    <span className="text-xs font-semibold text-white font-['Geist']">
+                    <span className="text-xs text-[#FF6500] font-semibold">
                       {booking.date} at {booking.showTime}
                     </span>
                   </div>
                 </div>
 
-                {/* Right Side: Seats & Actions */}
-                <div className="flex flex-col md:items-end justify-between gap-4 border-t md:border-t-0 pt-4 md:pt-0 border-white/5">
-                  <div className="flex flex-col md:items-end gap-1">
-                    <span className="text-[10px] text-[#aa8a7d] uppercase font-['Geist']">Reserved Seats</span>
-                    <div className="flex flex-wrap gap-1.5">
+                {/* Seats and Actions */}
+                <div className="flex flex-col sm:flex-row md:flex-col lg:flex-row items-start sm:items-center md:items-end lg:items-center gap-4 pt-4 md:pt-0 border-t md:border-t-0 border-[#222222]">
+                  <div className="flex flex-col gap-1 sm:text-right md:text-right">
+                    <span className="text-[11px] text-[#707070] uppercase font-semibold">
+                      Seats ({booking.seatCodes.length})
+                    </span>
+                    <div className="flex flex-wrap gap-1.5 sm:justify-end">
                       {booking.seatCodes.map((c) => (
                         <span
                           key={c}
-                          className="px-2 py-1 rounded bg-[#1c1b1b] text-white text-xs font-bold font-['Space_Grotesk'] border border-white/5"
+                          className="px-2 py-0.5 rounded bg-[#181818] border border-[#222222] text-xs font-semibold text-white"
                         >
                           {c}
                         </span>
                       ))}
                     </div>
+                    <span className="text-xs font-bold text-white mt-1">
+                      Total: £{booking.totalAmount.toFixed(2)}
+                    </span>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => setSelectedTicketForQR(booking.tickets[0])}
-                      className="px-4 py-2 rounded-full bg-[#1c1b1b] hover:bg-[#2a2a2a] text-white text-xs font-bold flex items-center gap-1.5 border border-white/10 transition-colors"
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={() => setSelectedTicketForQR(booking)}
+                      variant="primary"
+                      size="sm"
+                      leftIcon={<span className="material-symbols-outlined text-[16px]">qr_code_2</span>}
                     >
-                      <span className="material-symbols-outlined text-[16px] text-[#ff6500]">qr_code</span>
                       View QR Pass
-                    </button>
-                    <button
-                      onClick={() => window.print()}
-                      className="w-9 h-9 rounded-full bg-[#1c1b1b] hover:bg-[#2a2a2a] flex items-center justify-center text-white transition-colors"
-                      title="Print Ticket"
-                    >
-                      <span className="material-symbols-outlined text-[18px]">print</span>
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -159,34 +155,52 @@ export const MyBookingsPage: React.FC<MyBookingsPageProps> = ({ onBookMore, curr
           </div>
         )}
 
-        {/* QR Modal Popup */}
+        {/* QR Code Modal Dialog */}
         {selectedTicketForQR && (
-          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="bg-[#111111] border border-white/10 rounded-3xl p-8 max-w-sm w-full flex flex-col items-center gap-4 text-center">
-              <span className="text-[10px] text-[#ff6500] font-['Geist'] uppercase tracking-widest font-bold">
-                Auditorium Entry Pass
-              </span>
-              <div className="p-3 bg-white rounded-2xl shadow-2xl">
-                <img
-                  alt="Ticket QR Code"
-                  src={selectedTicketForQR.qrCodeDataUrl}
-                  className="w-48 h-48 object-contain"
-                />
+          <Modal
+            isOpen={Boolean(selectedTicketForQR)}
+            onClose={() => setSelectedTicketForQR(null)}
+            title="Auditorium Entry Pass"
+            subtitle={selectedTicketForQR.movieTitle}
+            maxWidth="sm"
+          >
+            <div className="flex flex-col items-center justify-center text-center gap-4 py-2">
+              <div className="p-4 rounded-2xl bg-white shadow-xl">
+                {selectedTicketForQR.tickets?.[0]?.qrCodeDataUrl ? (
+                  <img
+                    alt="Entry Pass QR"
+                    src={selectedTicketForQR.tickets[0].qrCodeDataUrl}
+                    className="w-44 h-44 object-contain"
+                  />
+                ) : (
+                  <div className="w-44 h-44 bg-black flex items-center justify-center text-white text-xs">
+                    QR PASS ACTIVE
+                  </div>
+                )}
               </div>
-              <div className="font-mono text-xs text-white font-bold tracking-wider">
-                {selectedTicketForQR.ticketNumber}
+
+              <div className="flex flex-col gap-1">
+                <span className="font-mono text-xs font-bold text-white tracking-widest">
+                  {selectedTicketForQR.tickets?.[0]?.ticketNumber || selectedTicketForQR.bookingReference}
+                </span>
+                <span className="text-xs text-[#A0A0A0]">
+                  {selectedTicketForQR.branchName} &bull; {selectedTicketForQR.screenName}
+                </span>
+                <span className="text-xs text-[#FF6500] font-semibold">
+                  Seats: {selectedTicketForQR.seatCodes.join(', ')}
+                </span>
               </div>
-              <p className="text-[10px] text-[#aa8a7d] font-['Geist']">
-                Seat {selectedTicketForQR.seatCode} &bull; Present this QR at the turnstile
-              </p>
-              <button
+
+              <Button
                 onClick={() => setSelectedTicketForQR(null)}
-                className="w-full py-2.5 rounded-full bg-[#ff6500] hover:bg-[#b74600] text-white text-xs font-bold uppercase transition-all mt-2"
+                variant="secondary"
+                size="md"
+                className="w-full mt-2"
               >
                 Close Pass
-              </button>
+              </Button>
             </div>
-          </div>
+          </Modal>
         )}
       </div>
     </div>

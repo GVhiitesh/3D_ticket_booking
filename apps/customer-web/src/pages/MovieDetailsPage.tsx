@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Movie, Show } from '../types';
+import { Button } from '../components/ui/Button';
+import { Badge } from '../components/ui/Badge';
 
 interface MovieDetailsPageProps {
   movie: Movie;
@@ -29,9 +31,9 @@ export const MovieDetailsPage: React.FC<MovieDetailsPageProps> = ({
   ];
 
   return (
-    <div className="w-full min-h-screen bg-[#080b12] text-white pt-20 pb-24">
+    <div className="w-full min-h-screen bg-[#050505] text-white pt-20 pb-24">
       {/* Backdrop Hero Header */}
-      <div className="relative w-full min-h-[60vh] flex flex-col justify-end px-5 md:px-12 pb-12 overflow-hidden">
+      <div className="relative w-full min-h-[55vh] flex flex-col justify-end px-5 md:px-12 pb-12 overflow-hidden border-b border-[#222222]">
         <div className="absolute inset-0 z-0">
           <img
             alt={movie.title}
@@ -42,141 +44,156 @@ export const MovieDetailsPage: React.FC<MovieDetailsPageProps> = ({
             }}
             className="w-full h-full object-cover object-center"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#080b12] via-[#080b12]/80 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#080b12] via-[#080b12]/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/60 to-transparent" />
         </div>
 
-        {/* Content */}
-        <div className="relative z-10 max-w-5xl flex flex-col gap-4">
+        {/* Content Container */}
+        <div className="relative z-10 max-w-7xl mx-auto w-full flex flex-col gap-4">
           <button
             onClick={onBack}
-            className="self-start flex items-center gap-1.5 text-xs text-slate-300 hover:text-[#ff5500] transition-colors mb-2"
+            className="self-start flex items-center gap-1.5 text-xs text-[#A0A0A0] hover:text-white transition-colors mb-2"
           >
-            <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-            <span>Back to Discovery</span>
+            <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+            <span>Back to Films</span>
           </button>
 
           <div className="flex flex-wrap items-center gap-2">
             {movie.badges?.map((badge) => (
-              <span
-                key={badge}
-                className="px-3 py-1 rounded-full bg-[#111111]/80 backdrop-blur-md text-[#ffb596] font-['Geist'] text-xs font-bold uppercase tracking-wider"
-              >
+              <Badge key={badge} variant="brand" size="sm">
                 {badge}
-              </span>
+              </Badge>
             ))}
           </div>
 
-          <h1 className="font-['Space_Grotesk'] text-4xl md:text-6xl font-bold uppercase tracking-tight text-white">
+          <h1 className="text-3xl sm:text-5xl font-bold uppercase tracking-tight text-white max-w-3xl">
             {movie.title}
           </h1>
 
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[#e3bfb1] font-['Geist'] text-xs">
-            <span>{movie.genre}</span>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-[#A0A0A0]">
+            <span className="text-white font-medium">{movie.genre}</span>
             <span>&bull;</span>
             <span>{movie.durationMins}m</span>
             <span>&bull;</span>
-            <span className="px-2 py-0.5 rounded bg-[#201f1f] text-white font-bold">{movie.certification}</span>
+            <span className="px-2 py-0.5 rounded bg-[#181818] border border-[#222222] text-white font-semibold">
+              {movie.certification}
+            </span>
             <span>&bull;</span>
-            <span className="inline-flex items-center gap-1 text-[#ffb596]">
-              <span className="material-symbols-outlined text-[16px] text-[#ff6500]" style={{ fontVariationSettings: "'FILL' 1" }}>
+            <span className="inline-flex items-center gap-1 text-white font-semibold">
+              <span
+                className="material-symbols-outlined text-[16px] text-[#FF6500]"
+                style={{ fontVariationSettings: "'FILL' 1" }}
+              >
                 star
               </span>
-              <strong className="text-white font-semibold">{movie.imdbRating}</strong> / 10
+              <span>{movie.imdbRating.toFixed(1)} / 10</span>
             </span>
             <span>&bull;</span>
             <span>Dir. {movie.director}</span>
           </div>
 
-          <p className="font-['Geist'] text-sm md:text-base text-[#e3bfb1] max-w-3xl leading-relaxed">
+          <p className="text-sm md:text-base text-[#A0A0A0] max-w-2xl leading-relaxed">
             {movie.description}
           </p>
 
           <div className="flex items-center gap-4 pt-2">
-            <button
+            <Button
               onClick={() => onOpenTrailer(movie.trailerUrl)}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#1c1b1b] hover:bg-[#2a2a2a] text-white text-xs font-bold tracking-wider uppercase transition-all border border-white/10"
+              variant="secondary"
+              size="md"
+              leftIcon={<span className="material-symbols-outlined text-[18px]">play_arrow</span>}
             >
-              <span className="material-symbols-outlined text-[#ff6500] text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                play_arrow
-              </span>
-              Watch Trailer
-            </button>
+              Watch Official Trailer
+            </Button>
           </div>
         </div>
       </div>
 
       {/* Screenings & Date Selector Section */}
-      <div className="w-full px-5 md:px-12 mt-12">
-        <div className="flex flex-col gap-2 mb-6">
-          <span className="text-xs text-[#ff6500] font-['Geist'] tracking-[0.25em] uppercase font-bold">
-            Select Date &amp; Showtime
+      <div className="max-w-7xl mx-auto px-5 md:px-12 mt-12 flex flex-col gap-8">
+        <div className="flex flex-col gap-1">
+          <span className="text-xs text-[#FF6500] font-semibold tracking-wider uppercase">
+            Curtain Call &amp; Showtimes
           </span>
-          <h2 className="font-['Space_Grotesk'] text-2xl font-bold text-white">
-            Available Auditoriums
+          <h2 className="text-2xl font-bold tracking-tight text-white">
+            Select Date &amp; Showtime
           </h2>
         </div>
 
-        {/* Date Tabs */}
-        <div className="flex items-center gap-3 overflow-x-auto pb-4 mb-8">
+        {/* Date Selector Tabs */}
+        <div className="flex items-center gap-3 overflow-x-auto pb-2">
           {dates.map((d) => (
             <button
               key={d.date}
               onClick={() => setSelectedDate(d.date)}
               className={`flex flex-col items-center px-6 py-3 rounded-2xl min-w-[120px] transition-all border ${
                 selectedDate === d.date
-                  ? 'bg-[#ff6500] text-white border-transparent shadow-[0_0_20px_rgba(255,101,0,0.4)]'
-                  : 'bg-[#111111] text-[#e3bfb1] hover:text-white border-white/5'
+                  ? 'bg-[#181818] text-white border-[#FF6500]/50 shadow-sm'
+                  : 'bg-[#111111] text-[#A0A0A0] hover:text-white border-[#222222]'
               }`}
             >
-              <span className="text-xs font-bold font-['Space_Grotesk']">{d.label}</span>
-              <span className="text-[10px] font-['Geist'] opacity-80">{d.day}</span>
+              <span className="text-xs font-semibold">{d.label}</span>
+              <span className="text-[10px] text-[#707070]">{d.day}</span>
             </button>
           ))}
         </div>
 
-        {/* Branch Showtimes List */}
+        {/* Cinema Branch Showtime Cards */}
         <div className="flex flex-col gap-6">
-          {branches.map((branchName) => {
-            const branchShows = movieShows.filter((s) => s.branchName === branchName);
+          {branches.length === 0 ? (
+            <div className="p-8 rounded-2xl bg-[#111111] border border-[#222222] text-center text-sm text-[#A0A0A0]">
+              No active showtimes currently scheduled for this date.
+            </div>
+          ) : (
+            branches.map((branchName) => {
+              const branchShows = movieShows.filter((s) => s.branchName === branchName);
+              const branchCity = branchShows[0]?.city || 'London';
 
-            return (
-              <div
-                key={branchName}
-                className="p-6 rounded-2xl bg-[#111111] border border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xl"
-              >
-                <div className="flex flex-col gap-1 max-w-md">
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[#ff6500] text-[18px]">location_on</span>
-                    <h3 className="font-['Space_Grotesk'] text-lg font-bold text-white">{branchName}</h3>
+              return (
+                <div
+                  key={branchName}
+                  className="p-6 rounded-2xl bg-[#111111] border border-[#222222] flex flex-col gap-5 shadow-card-subtle"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#222222]">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-[#181818] border border-[#222222] flex items-center justify-center text-[#FF6500]">
+                        <span className="material-symbols-outlined text-[18px]">location_on</span>
+                      </div>
+                      <div>
+                        <h3 className="text-base font-semibold text-white">{branchName}</h3>
+                        <span className="text-xs text-[#707070]">{branchCity} &bull; Flagship Laser Venue</span>
+                      </div>
+                    </div>
+                    <Badge variant="outline" size="sm">
+                      E-TICKETS &amp; 3D SEAT VIEW
+                    </Badge>
                   </div>
-                  <span className="text-xs text-[#e3bfb1] font-['Geist'] pl-6">
-                    {branchShows[0]?.city} &bull; {branchShows[0]?.audioSpec}
-                  </span>
-                </div>
 
-                <div className="flex flex-wrap items-center gap-3">
-                  {branchShows.map((show) => (
-                    <button
-                      key={show.id}
-                      onClick={() => onSelectShow(show)}
-                      className="group/show p-3 rounded-xl bg-[#1c1b1b] hover:bg-[#ff6500] transition-all duration-200 border border-white/5 hover:border-transparent flex flex-col items-center min-w-[110px] shadow-md"
-                    >
-                      <span className="text-sm font-bold text-white group-hover/show:text-white font-['Space_Grotesk']">
-                        {show.startTime}
-                      </span>
-                      <span className="text-[9px] uppercase font-bold text-[#ffb596] group-hover/show:text-white font-['Geist'] mt-0.5">
-                        {show.screenFormat}
-                      </span>
-                      <span className="text-[10px] text-[#e3bfb1] group-hover/show:text-white/80 font-['Geist'] mt-1">
-                        from £{show.pricing.STANDARD}
-                      </span>
-                    </button>
-                  ))}
+                  <div className="flex flex-wrap items-center gap-3">
+                    {branchShows.map((show) => (
+                      <button
+                        key={show.id}
+                        onClick={() => onSelectShow(show)}
+                        className="group p-3 rounded-xl bg-[#181818] hover:bg-[#FF6500] hover:text-white border border-[#222222] hover:border-[#FF6500] text-left transition-all flex flex-col gap-1 min-w-[150px]"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-sm font-bold text-white group-hover:text-white">
+                            {show.startTime}
+                          </span>
+                          <span className="text-[10px] uppercase font-bold text-[#FF6500] group-hover:text-white">
+                            {show.screenFormat.includes('IMAX') ? 'IMAX' : '70MM'}
+                          </span>
+                        </div>
+                        <span className="text-[11px] text-[#707070] group-hover:text-white/80 line-clamp-1">
+                          {show.screenName}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       </div>
     </div>

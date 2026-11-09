@@ -12,6 +12,9 @@ import { ConfirmationPage } from './pages/ConfirmationPage';
 import { MyBookingsPage } from './pages/MyBookingsPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { AuthModal } from './pages/AuthModal';
+import { Modal } from './components/ui/Modal';
+import { Button } from './components/ui/Button';
+import { ToastProvider } from './components/ui/Toast';
 
 export function App() {
   const [currentTab, setCurrentTab] = useState<string>('home');
@@ -36,7 +39,6 @@ export function App() {
   const [trailerModalUrl, setTrailerModalUrl] = useState<string | null>(null);
   const [searchModalOpen, setSearchModalOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark'); // Luxury Obsidian Slate Cinema Theme
 
   // Fetch initial data from backend API
   useEffect(() => {
@@ -96,209 +98,206 @@ export function App() {
   };
 
   return (
-    <div
-      className="w-full min-h-screen bg-[#080b12] text-slate-100 flex flex-col font-['Geist'] selection:bg-[#ff5500] selection:text-white transition-colors duration-200"
-    >
-      {/* Universal Fixed Header */}
-      <Header
-        currentTab={currentTab}
-        onNavigate={(tab) => {
-          setCurrentTab(tab);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-        onOpenAuth={() => setAuthModalOpen(true)}
-        currentUser={currentUser}
-        selectedCity={selectedCity}
-        onSelectCity={setSelectedCity}
-        onOpenSearch={() => setSearchModalOpen(true)}
-        theme={theme}
-        onToggleTheme={() => setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))}
-      />
+    <ToastProvider>
+      <div className="w-full min-h-screen bg-[#050505] text-[#FFFFFF] flex flex-col font-sans selection:bg-[#FF6500] selection:text-white transition-colors duration-200">
+        {/* Universal Fixed Header */}
+        <Header
+          currentTab={currentTab}
+          onNavigate={(tab) => {
+            setCurrentTab(tab);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onOpenAuth={() => setAuthModalOpen(true)}
+          currentUser={currentUser}
+          selectedCity={selectedCity}
+          onSelectCity={setSelectedCity}
+          onOpenSearch={() => setSearchModalOpen(true)}
+        />
 
-      {/* Main Screen Renderer */}
-      <main className="flex-1 w-full">
-        {currentTab === 'home' && (
-          <HomePage
-            movies={movies}
-            shows={shows}
-            onSelectMovie={handleSelectMovie}
-            onBookShow={handleBookShow}
-            onOpenTrailer={(url) => setTrailerModalUrl(url)}
-          />
+        {/* Main Screen Content */}
+        <main className="flex-1 w-full">
+          {currentTab === 'home' && (
+            <HomePage
+              movies={movies}
+              shows={shows}
+              onSelectMovie={handleSelectMovie}
+              onBookShow={handleBookShow}
+              onOpenTrailer={(url) => setTrailerModalUrl(url)}
+            />
+          )}
+
+          {currentTab === 'movies' && (
+            <MoviesPage
+              movies={movies}
+              onSelectMovie={handleSelectMovie}
+            />
+          )}
+
+          {currentTab === 'movie-details' && selectedMovie && (
+            <MovieDetailsPage
+              movie={selectedMovie}
+              shows={shows}
+              onSelectShow={handleBookShow}
+              onOpenTrailer={(url) => setTrailerModalUrl(url)}
+              onBack={() => setCurrentTab('movies')}
+            />
+          )}
+
+          {currentTab === 'cinemas' && (
+            <CinemasPage
+              branches={branches}
+              shows={shows}
+              onSelectBranch={() => setCurrentTab('movies')}
+              onBookShow={handleBookShow}
+            />
+          )}
+
+          {currentTab === 'seat-selection' && selectedShow && selectedMovie && (
+            <SeatSelectionPage
+              show={selectedShow}
+              movie={selectedMovie}
+              onProceedToCheckout={handleProceedToCheckout}
+              onBack={() => setCurrentTab('movie-details')}
+            />
+          )}
+
+          {currentTab === 'checkout' && selectedShow && selectedMovie && (
+            <CheckoutPage
+              show={selectedShow}
+              movie={selectedMovie}
+              selectedSeatCodes={selectedSeatCodes}
+              subtotal={checkoutSubtotal}
+              currentUser={currentUser}
+              onPaymentSuccess={handlePaymentSuccess}
+              onBack={() => setCurrentTab('seat-selection')}
+            />
+          )}
+
+          {currentTab === 'confirmation' && confirmedBooking && (
+            <ConfirmationPage
+              booking={confirmedBooking}
+              onGoToBookings={() => setCurrentTab('my-bookings')}
+              onGoHome={() => setCurrentTab('home')}
+            />
+          )}
+
+          {currentTab === 'my-bookings' && (
+            <MyBookingsPage
+              currentUser={currentUser}
+              onBookMore={() => setCurrentTab('movies')}
+            />
+          )}
+
+          {currentTab === 'profile' && currentUser && (
+            <ProfilePage
+              currentUser={currentUser}
+              onLogout={() => setCurrentUser(null)}
+              onGoToBookings={() => setCurrentTab('my-bookings')}
+            />
+          )}
+        </main>
+
+        {/* Universal Footer */}
+        {currentTab !== 'seat-selection' && (
+          <Footer onNavigate={(tab) => setCurrentTab(tab)} />
         )}
 
-        {currentTab === 'movies' && (
-          <MoviesPage
-            movies={movies}
-            onSelectMovie={handleSelectMovie}
-          />
-        )}
+        {/* Auth Modal */}
+        <AuthModal
+          isOpen={authModalOpen}
+          onClose={() => setAuthModalOpen(false)}
+          onAuthSuccess={(user) => {
+            setCurrentUser(user);
+            setAuthModalOpen(false);
+          }}
+        />
 
-        {currentTab === 'movie-details' && selectedMovie && (
-          <MovieDetailsPage
-            movie={selectedMovie}
-            shows={shows}
-            onSelectShow={handleBookShow}
-            onOpenTrailer={(url) => setTrailerModalUrl(url)}
-            onBack={() => setCurrentTab('movies')}
-          />
-        )}
-
-        {currentTab === 'cinemas' && (
-          <CinemasPage
-            branches={branches}
-            shows={shows}
-            onSelectBranch={() => setCurrentTab('movies')}
-            onBookShow={handleBookShow}
-          />
-        )}
-
-        {currentTab === 'seat-selection' && selectedShow && selectedMovie && (
-          <SeatSelectionPage
-            show={selectedShow}
-            movie={selectedMovie}
-            onProceedToCheckout={handleProceedToCheckout}
-            onBack={() => setCurrentTab('movie-details')}
-            theme={theme}
-          />
-        )}
-
-        {currentTab === 'checkout' && selectedShow && selectedMovie && (
-          <CheckoutPage
-            show={selectedShow}
-            movie={selectedMovie}
-            selectedSeatCodes={selectedSeatCodes}
-            subtotal={checkoutSubtotal}
-            currentUser={currentUser}
-            onPaymentSuccess={handlePaymentSuccess}
-            onBack={() => setCurrentTab('seat-selection')}
-          />
-        )}
-
-        {currentTab === 'confirmation' && confirmedBooking && (
-          <ConfirmationPage
-            booking={confirmedBooking}
-            onGoToBookings={() => setCurrentTab('my-bookings')}
-            onGoHome={() => setCurrentTab('home')}
-          />
-        )}
-
-        {currentTab === 'my-bookings' && (
-          <MyBookingsPage
-            currentUser={currentUser}
-            onBookMore={() => setCurrentTab('movies')}
-          />
-        )}
-
-        {currentTab === 'profile' && currentUser && (
-          <ProfilePage
-            currentUser={currentUser}
-            onLogout={() => setCurrentUser(null)}
-            onGoToBookings={() => setCurrentTab('my-bookings')}
-          />
-        )}
-      </main>
-
-      {/* Universal Footer */}
-      {currentTab !== 'seat-selection' && (
-        <Footer onNavigate={(tab) => setCurrentTab(tab)} />
-      )}
-
-      {/* Auth Modal */}
-      <AuthModal
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
-        onAuthSuccess={(user) => {
-          setCurrentUser(user);
-          setAuthModalOpen(false);
-        }}
-      />
-
-      {/* Trailer Video Player Modal */}
-      {trailerModalUrl && (
-        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="relative w-full max-w-4xl aspect-video bg-black rounded-3xl overflow-hidden shadow-2xl border border-white/10">
-            <button
-              onClick={() => setTrailerModalUrl(null)}
-              className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center text-lg transition-colors border border-white/20"
-            >
-              &times;
-            </button>
-            <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center gap-4 bg-gradient-to-b from-[#111111] to-[#050505]">
-              <span className="material-symbols-outlined text-[#ff6500] text-[64px] animate-pulse">
+        {/* Trailer Player Modal */}
+        {trailerModalUrl && (
+          <Modal
+            isOpen={Boolean(trailerModalUrl)}
+            onClose={() => setTrailerModalUrl(null)}
+            title="Theatrical Teaser"
+            subtitle="4K Dual Laser Presentation"
+            maxWidth="4xl"
+          >
+            <div className="w-full aspect-video bg-[#050505] rounded-2xl overflow-hidden border border-[#222222] flex flex-col items-center justify-center p-8 text-center gap-4">
+              <span className="material-symbols-outlined text-[#FF6500] text-[64px] animate-pulse">
                 play_circle
               </span>
-              <h3 className="font-['Space_Grotesk'] text-2xl font-bold text-white uppercase tracking-wider">
+              <h3 className="text-2xl font-bold text-white uppercase tracking-wider">
                 CHRONOS: BEYOND TIME — 4K Official Trailer
               </h3>
-              <p className="text-xs text-[#aa8a7d] max-w-md font-['Geist']">
-                Experience the official IMAX 70mm theatrical presentation teaser.
+              <p className="text-xs text-[#A0A0A0] max-w-md">
+                Experience the official IMAX 70mm theatrical presentation preview in Dolby Atmos 64-channel spatial sound.
               </p>
-              <button
+              <Button
                 onClick={() => setTrailerModalUrl(null)}
-                className="mt-4 px-6 py-2.5 rounded-full bg-[#ff6500] hover:bg-[#b74600] text-white text-xs font-bold uppercase transition-all"
+                variant="primary"
+                size="md"
+                className="mt-2"
               >
-                Close Player
-              </button>
+                Close Trailer
+              </Button>
             </div>
-          </div>
-        </div>
-      )}
+          </Modal>
+        )}
 
-      {/* Search Modal */}
-      {searchModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-start justify-center pt-24 p-4">
-          <div className="bg-[#111111] border border-white/10 rounded-2xl p-6 max-w-xl w-full shadow-2xl flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-[#ff6500] font-['Geist'] uppercase tracking-wider">
-                Quick Search
-              </span>
-              <button
-                onClick={() => setSearchModalOpen(false)}
-                className="text-[#aa8a7d] hover:text-white"
-              >
-                &times;
-              </button>
-            </div>
-            <div className="relative flex items-center">
-              <span className="material-symbols-outlined text-[#aa8a7d] absolute left-3 text-[20px]">
-                search
-              </span>
-              <input
-                type="text"
-                autoFocus
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search movies, auditoriums, or formats..."
-                className="w-full bg-[#1c1b1b] text-white pl-10 pr-4 py-3 rounded-xl border border-white/5 focus:border-[#ff6500] focus:outline-none text-xs font-['Geist']"
-              />
-            </div>
-            <div className="flex flex-col gap-2 max-h-60 overflow-y-auto pt-2">
-              {movies
-                .filter((m) => m.title.toLowerCase().includes(searchTerm.toLowerCase()))
-                .map((m) => (
-                  <div
-                    key={m.id}
-                    onClick={() => {
-                      setSearchModalOpen(false);
-                      handleSelectMovie(m);
-                    }}
-                    className="p-3 rounded-xl hover:bg-[#1c1b1b] cursor-pointer flex items-center justify-between transition-colors border border-transparent hover:border-white/5"
-                  >
-                    <div className="flex items-center gap-3">
-                      <img alt={m.title} src={m.posterUrl} className="w-8 h-12 object-cover rounded" />
-                      <div>
-                        <div className="text-sm font-bold text-white font-['Space_Grotesk']">{m.title}</div>
-                        <div className="text-[10px] text-[#aa8a7d]">{m.genre} &bull; {m.durationMins}m</div>
+        {/* Quick Search Modal */}
+        {searchModalOpen && (
+          <Modal
+            isOpen={searchModalOpen}
+            onClose={() => setSearchModalOpen(false)}
+            title="Search Theatrical Catalog"
+            subtitle="Instant Screening Lookup"
+            maxWidth="xl"
+          >
+            <div className="flex flex-col gap-4">
+              <div className="relative flex items-center">
+                <span className="material-symbols-outlined text-[#707070] absolute left-3.5 text-[20px]">
+                  search
+                </span>
+                <input
+                  type="text"
+                  autoFocus
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search movies, auditoriums, formats..."
+                  className="w-full bg-[#0B0B0B] text-white pl-10 pr-4 py-3 rounded-xl border border-[#222222] focus:border-[#FF6500] focus:outline-none text-sm"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5 max-h-64 overflow-y-auto pt-2">
+                {movies
+                  .filter((m) => m.title.toLowerCase().includes(searchTerm.toLowerCase()) || m.genre.toLowerCase().includes(searchTerm.toLowerCase()))
+                  .map((m) => (
+                    <div
+                      key={m.id}
+                      onClick={() => {
+                        setSearchModalOpen(false);
+                        handleSelectMovie(m);
+                      }}
+                      className="p-3 rounded-xl hover:bg-[#181818] cursor-pointer flex items-center justify-between transition-colors border border-transparent hover:border-[#222222]"
+                    >
+                      <div className="flex items-center gap-3">
+                        <img
+                          alt={m.title}
+                          src={m.posterUrl}
+                          className="w-9 h-13 object-cover rounded-md border border-white/5"
+                        />
+                        <div>
+                          <div className="text-sm font-semibold text-white">{m.title}</div>
+                          <div className="text-xs text-[#707070]">{m.genre} &bull; {m.durationMins}m</div>
+                        </div>
                       </div>
+                      <span className="material-symbols-outlined text-[#FF6500] text-[18px]">chevron_right</span>
                     </div>
-                    <span className="material-symbols-outlined text-[#ff6500] text-[18px]">chevron_right</span>
-                  </div>
-                ))}
+                  ))}
+              </div>
             </div>
-          </div>
-        </div>
-      )}
-    </div>
+          </Modal>
+        )}
+      </div>
+    </ToastProvider>
   );
 }
