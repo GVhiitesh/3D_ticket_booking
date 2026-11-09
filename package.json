@@ -1,0 +1,20 @@
+{
+  "name": "apna-bazaar-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "services/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "start:api": "npm --prefix services/api run dev",
+    "start:admin": "npm --prefix apps/admin run dev",
+    "start:mobile": "npm --prefix apps/mobile run start",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm --prefix services/api test"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

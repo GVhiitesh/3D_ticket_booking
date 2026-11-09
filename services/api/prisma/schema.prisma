@@ -1,0 +1,354 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  SUPER_ADMIN
+  CINEMA_OWNER
+  BRANCH_MANAGER
+  THEATRE_STAFF
+  CUSTOMER
+}
+
+enum StaffType {
+  TICKET_CHECKER
+  BOX_OFFICE_OPERATOR
+  MANAGER
+}
+
+enum ScreenFormat {
+  STANDARD_2D
+  STANDARD_3D
+  IMAX_70MM
+  IMAX_LASER
+  DOLBY_CINEMA
+  FOUR_DX
+}
+
+enum SeatCategory {
+  STANDARD
+  PREMIUM
+  VIP_SUITE
+  ACCESSIBLE
+}
+
+enum SeatStatus {
+  AVAILABLE
+  HELD
+  BOOKED
+  BLOCKED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  EXPIRED
+  REQUIRES_REVIEW
+}
+
+enum PaymentMethod {
+  UPI
+  CARD
+  NETBANKING
+  CASH
+}
+
+enum PaymentStatus {
+  CREATED
+  PENDING
+  SUCCESS
+  FAILED
+  UNKNOWN
+  REFUNDED
+}
+
+enum TicketStatus {
+  ACTIVE
+  CHECKED_IN
+  CANCELLED
+  EXPIRED
+}
+
+model Tenant {
+  id                    String        @id @default(uuid())
+  name                  String        @unique // e.g. "CINEVA Entertainment"
+  legalName             String?
+  gstNumber             String?
+  status                String        @default("ACTIVE") // PENDING_REVIEW, ACTIVE, SUSPENDED
+  cancellationPolicy    String?
+  cancellationCutoffHrs Int           @default(2)
+  refundPercentage      Int           @default(80)
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  branches              Branch[]
+  users                 User[]
+  screens               Screen[]
+  shows                 Show[]
+  bookings              Booking[]
+  auditLogs             AuditLog[]
+}
+
+model Branch {
+  id             String       @id @default(uuid())
+  tenantId       String
+  tenant         Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name           String       // e.g. "CINEVA IMAX West End"
+  city           String       // e.g. "London", "Bengaluru", "Mumbai"
+  address        String
+  phone          String?
+  email          String?
+  timezone       String       @default("Asia/Kolkata")
+  operatingHours String?
+  isActive       Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  screens        Screen[]
+  shows          Show[]
+  bookings       Booking[]
+  staff          StaffAssignment[]
+
+  @@index([tenantId])
+  @@index([city])
+}
+
+model User {
+  id           String        @id @default(uuid())
+  phone        String        @unique
+  email        String        @unique
+  fullName     String
+  passwordHash String
+  role         Role          @default(CUSTOMER)
+  tenantId     String?       // Populated for CINEMA_OWNER, BRANCH_MANAGER, THEATRE_STAFF
+  tenant       Tenant?       @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  bookings     Booking[]
+  assignments  StaffAssignment[]
+  auditLogs    AuditLog[]
+
+  @@index([tenantId])
+  @@index([role])
+}
+
+model StaffAssignment {
+  id          String     @id @default(uuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  branchId    String
+  branch      Branch     @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  staffType   StaffType  @default(TICKET_CHECKER)
+  createdAt   DateTime   @default(now())
+
+  @@unique([userId, branchId])
+}
+
+model Screen {
+  id             String          @id @default(uuid())
+  branchId       String
+  branch         Branch          @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  tenantId       String
+  tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  screenNumber   Int
+  name           String          // e.g. "Auditorium 1 — Ultra IMAX Laser"
+  format         ScreenFormat    @default(IMAX_LASER)
+  totalCapacity  Int             @default(136)
+  audioSpec      String?         @default("Dolby Atmos 128-channel")
+  projectionSpec String?         @default("Curved 70ft Harkness Silver Screen")
+  isActive       Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  layouts        SeatingLayout[]
+  shows          Show[]
+
+  @@index([branchId])
+}
+
+model SeatingLayout {
+  id           String       @id @default(uuid())
+  screenId     String
+  screen       Screen       @relation(fields: [screenId], references: [id], onDelete: Cascade)
+  version      Int          @default(1)
+  name         String       @default("Standard 3D Layout")
+  dimensions   String?      // e.g. "9 rows, 136 seats"
+  layoutJson   String       // Serialized 3D seat coordinates, rows, aisles, and curvature
+  isPublished  Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+
+  shows        Show[]
+
+  @@index([screenId])
+}
+
+model Movie {
+  id            String       @id @default(uuid())
+  title         String       // e.g. "CHRONOS: BEYOND TIME"
+  slug          String       @unique
+  description   String
+  director      String?
+  musicDirector String?
+  cast          String?
+  genre         String       // e.g. "Sci-Fi / Thriller"
+  language      String       // e.g. "English", "Hindi", "Tamil"
+  durationMins  Int          // e.g. 168
+  certification String       // e.g. "12A", "UA", "A"
+  imdbRating    Decimal?     @db.Decimal(3, 1) // e.g. 9.8
+  posterUrl     String
+  backdropUrl   String?
+  trailerUrl    String?
+  releaseDate   DateTime
+  status        String       @default("NOW_SHOWING") // NOW_SHOWING, UPCOMING, ARCHIVED
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  shows         Show[]
+
+  @@index([status])
+}
+
+model Show {
+  id               String       @id @default(uuid())
+  tenantId         String
+  tenant           Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  branchId         String
+  branch           Branch       @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  screenId         String
+  screen           Screen       @relation(fields: [screenId], references: [id], onDelete: Cascade)
+  movieId          String
+  movie            Movie        @relation(fields: [movieId], references: [id], onDelete: Restrict)
+  layoutId         String
+  layout           SeatingLayout @relation(fields: [layoutId], references: [id], onDelete: Restrict)
+  startTime        DateTime
+  endTime          DateTime
+  pricingJson      String       // { "STANDARD": 18.5, "PREMIUM": 24.5, "VIP_SUITE": 35.0 }
+  bookingOpensAt   DateTime     @default(now())
+  bookingClosesAt  DateTime
+  status           String       @default("SCHEDULED") // SCHEDULED, CANCELLED, COMPLETED
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  seats            ShowSeat[]
+  bookings         Booking[]
+
+  @@index([branchId, startTime])
+  @@index([movieId])
+}
+
+model ShowSeat {
+  id            String       @id @default(uuid())
+  showId        String
+  show          Show         @relation(fields: [showId], references: [id], onDelete: Cascade)
+  rowName       String       // e.g. "E"
+  seatNumber    Int          // e.g. 9
+  seatCode      String       // e.g. "E-9"
+  category      SeatCategory @default(STANDARD)
+  tierName      String       @default("Standard")
+  price         Decimal      @db.Decimal(10, 2)
+  status        SeatStatus   @default(AVAILABLE)
+  heldByUserId  String?
+  holdExpiresAt DateTime?
+  bookingId     String?
+  booking       Booking?     @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  version       Int          @default(0) // Optimistic concurrency lock counter
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  tickets       Ticket[]
+
+  @@unique([showId, seatCode])
+  @@index([showId, status])
+}
+
+model Booking {
+  id                   String        @id @default(uuid())
+  bookingReference     String        @unique // e.g. "CNM-83921"
+  tenantId             String
+  tenant               Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  branchId             String
+  branch               Branch        @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  showId               String
+  show                 Show          @relation(fields: [showId], references: [id], onDelete: Cascade)
+  userId               String
+  user                 User          @relation(fields: [userId], references: [id], onDelete: Restrict)
+  channel              String        @default("ONLINE") // ONLINE or COUNTER
+  status               BookingStatus @default(PENDING)
+  totalSeats           Int
+  subtotal             Decimal       @db.Decimal(10, 2)
+  taxAmount            Decimal       @default(0.00) @db.Decimal(10, 2)
+  convenienceFee       Decimal       @default(0.00) @db.Decimal(10, 2)
+  totalAmount          Decimal       @db.Decimal(10, 2)
+  holdExpiresAt        DateTime?
+  idempotencyKey       String?       @unique
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  seats                ShowSeat[]
+  tickets              Ticket[]
+  payments             Payment[]
+
+  @@index([userId])
+  @@index([showId])
+}
+
+model Payment {
+  id               String        @id @default(uuid())
+  bookingId        String
+  booking          Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  provider         String        @default("RAZORPAY")
+  gatewayOrderId   String?       @unique
+  gatewayPaymentId String?       @unique
+  gatewaySignature String?
+  method           PaymentMethod @default(UPI)
+  amount           Decimal       @db.Decimal(10, 2)
+  currency         String        @default("INR")
+  status           PaymentStatus @default(PENDING)
+  rawResponse      String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@index([bookingId])
+}
+
+model Ticket {
+  id               String       @id @default(uuid())
+  bookingId        String
+  booking          Booking      @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  showSeatId       String
+  showSeat         ShowSeat     @relation(fields: [showSeatId], references: [id], onDelete: Cascade)
+  ticketNumber     String       @unique // e.g. "TKT-CNM-E9"
+  qrPayload        String       // Cryptographic HMAC-signed token
+  status           TicketStatus @default(ACTIVE)
+  checkedInAt      DateTime?
+  checkedInByStaff String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@index([bookingId])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  tenantId   String?
+  tenant     Tenant?  @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action     String   // e.g. "HOLD_SEATS", "CONFIRM_BOOKING", "CANCEL_BOOKING", "CHECK_IN_TICKET"
+  resource   String   // e.g. "ShowSeat", "Booking", "Ticket"
+  resourceId String?
+  details    String?  // JSON metadata
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@index([tenantId])
+  @@index([action])
+}
