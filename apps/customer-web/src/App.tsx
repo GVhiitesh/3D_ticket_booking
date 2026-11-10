@@ -120,6 +120,9 @@ export function App() {
             <HomePage
               movies={movies}
               shows={shows}
+              branches={branches}
+              selectedCity={selectedCity}
+              onSelectCity={setSelectedCity}
               onSelectMovie={handleSelectMovie}
               onBookShow={handleBookShow}
               onOpenTrailer={(url) => setTrailerModalUrl(url)}
