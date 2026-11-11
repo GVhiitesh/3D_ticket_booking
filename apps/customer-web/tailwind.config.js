@@ -5,6 +5,26 @@ export default {
   theme: {
     extend: {
       colors: {
+        cv: {
+          bg: 'rgb(var(--cv-bg-rgb) / <alpha-value>)',
+          'bg-secondary': 'rgb(var(--cv-bg-secondary-rgb) / <alpha-value>)',
+          'bg-subtle': 'rgb(var(--cv-bg-subtle-rgb) / <alpha-value>)',
+          surface: 'rgb(var(--cv-surface-rgb) / <alpha-value>)',
+          card: 'rgb(var(--cv-surface-card-rgb) / <alpha-value>)',
+          inset: 'rgb(var(--cv-surface-inset-rgb) / <alpha-value>)',
+          elevated: 'rgb(var(--cv-elevated-rgb) / <alpha-value>)',
+          'elevated-hover': 'rgb(var(--cv-elevated-hover-rgb) / <alpha-value>)',
+          border: 'rgb(var(--cv-border-rgb) / <alpha-value>)',
+          'border-hover': 'rgb(var(--cv-border-hover-rgb) / <alpha-value>)',
+          primary: 'rgb(var(--cv-primary-rgb) / <alpha-value>)',
+          secondary: 'rgb(var(--cv-secondary-rgb) / <alpha-value>)',
+          muted: 'rgb(var(--cv-muted-rgb) / <alpha-value>)',
+          subhead: 'rgb(var(--cv-subhead-rgb) / <alpha-value>)',
+          accent: 'rgb(var(--cv-accent-rgb) / <alpha-value>)',
+          'accent-hover': 'rgb(var(--cv-accent-hover-rgb) / <alpha-value>)',
+          amber: 'rgb(var(--cv-amber-rgb) / <alpha-value>)',
+          ink: 'rgb(var(--cv-ink-rgb) / <alpha-value>)',
+        },
         cineva: {
           bg: '#050505',
           'bg-secondary': '#0B0B0B',
@@ -27,10 +47,10 @@ export default {
         display: ['Inter', 'sans-serif'],
       },
       boxShadow: {
-        'glow-orange': '0 0 24px -4px rgba(255, 101, 0, 0.35)',
-        'glow-orange-sm': '0 0 12px -2px rgba(255, 101, 0, 0.25)',
-        'card-subtle': '0 4px 20px -2px rgba(0, 0, 0, 0.7)',
-        'elevated-xl': '0 24px 60px -12px rgba(0, 0, 0, 0.95)',
+        'glow-orange': '0 0 24px -4px rgb(var(--cv-accent-rgb) / 0.35)',
+        'glow-orange-sm': '0 0 12px -2px rgb(var(--cv-accent-rgb) / 0.25)',
+        'card-subtle': 'var(--cv-card-shadow)',
+        'elevated-xl': 'var(--cv-elevated-shadow)',
       },
       borderRadius: {
         DEFAULT: '0.375rem',

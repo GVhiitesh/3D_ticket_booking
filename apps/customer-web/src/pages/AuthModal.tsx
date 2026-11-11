@@ -37,7 +37,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
       maxWidth="md"
     >
       <div className="flex flex-col gap-5">
-        <p className="text-xs text-[#A0A0A0] -mt-2">
+        <p className="text-xs text-cv-secondary -mt-2">
           {isSignUp
             ? 'Unlock 3D seat reservation, priority 10-minute locks & exclusive 70mm screenings.'
             : 'Access your saved digital passes and booking history.'}
@@ -93,15 +93,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuc
           </Button>
         </form>
 
-        <div className="flex items-center justify-between text-xs text-[#707070] pt-3 border-t border-[#222222]">
+        <div className="flex items-center justify-between text-xs text-cv-muted pt-3 border-t border-cv-border">
           <button
             type="button"
             onClick={() => setIsSignUp(!isSignUp)}
-            className="hover:text-white transition-colors"
+            className="hover:text-cv-primary transition-colors"
           >
             {isSignUp ? 'Already a member? Sign In' : 'Need an account? Join Now'}
           </button>
-          <a href="#" className="hover:text-[#FF6500] transition-colors">
+          <a href="#" className="hover:text-cv-accent transition-colors">
             Forgot Password?
           </a>
         </div>

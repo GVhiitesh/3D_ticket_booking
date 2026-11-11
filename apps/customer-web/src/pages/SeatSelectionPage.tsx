@@ -19,6 +19,7 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
   movie,
   onProceedToCheckout,
   onBack,
+  theme = 'dark',
 }) => {
   const [seats, setSeats] = useState<SeatNode[]>([]);
   const [selectedSeatCodes, setSelectedSeatCodes] = useState<string[]>([]);
@@ -132,15 +133,15 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
   };
 
   return (
-    <div className="flex flex-col w-full relative h-[calc(100vh-5rem)] mt-20 overflow-hidden select-none bg-[#050505] text-[#FFFFFF]">
+    <div className="flex flex-col w-full relative h-[calc(100vh-5rem)] mt-20 overflow-hidden select-none bg-cv-bg-secondary text-cv-primary transition-colors">
       {/* Main Viewport: 2D Seat Plan First -> Confirmed into 3D Scene */}
       <div className="absolute inset-0 w-full h-full z-10">
         {is2DView ? (
           <div className="w-full h-full overflow-y-auto pt-20 pb-28 px-4 md:px-8">
             <div className="max-w-[1220px] mx-auto">
               {loading && seats.length === 0 ? (
-                <div className="w-full py-24 rounded-3xl border border-[#222222] bg-[#0B0B0B] flex flex-col items-center justify-center gap-3 text-sm text-[#A0A0A0]">
-                  <span className="w-6 h-6 rounded-full border-2 border-[#FF6500] border-t-transparent animate-spin" />
+                <div className="w-full py-24 rounded-3xl border border-cv-border bg-cv-surface shadow-card-subtle flex flex-col items-center justify-center gap-3 text-sm text-cv-secondary">
+                  <span className="w-6 h-6 rounded-full border-2 border-cv-accent border-t-transparent animate-spin" />
                   <span>Loading interactive 2D seat layout...</span>
                 </div>
               ) : (
@@ -148,7 +149,7 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
                   seats={seats}
                   selectedSeatCodes={selectedSeatCodes}
                   onToggleSeat={toggleSeat}
-                  theme="dark"
+                  theme={theme}
                   city={show.city}
                   showFormat={show.screenFormat}
                   topPrice={show.pricing?.STANDARD}
@@ -162,7 +163,7 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
             selectedSeatCodes={selectedSeatCodes}
             onToggleSeat={toggleSeat}
             interactive={true}
-            theme="dark"
+            theme={theme}
             city={show.city}
           />
         )}
@@ -171,17 +172,17 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
       {/* TOP HUD BAR */}
       <div className="relative z-20 w-full px-4 md:px-8 pt-3 pointer-events-none flex flex-wrap items-center justify-between gap-3">
         {/* Left: Back Button & Screening Info */}
-        <div className="pointer-events-auto flex items-center gap-3 backdrop-blur-xl px-4 py-2 rounded-full border border-[#222222] bg-[#111111]/90 shadow-md">
+        <div className="pointer-events-auto flex items-center gap-3 backdrop-blur-xl px-4 py-2 rounded-full border border-cv-border bg-cv-surface/95 shadow-card-subtle">
           <button
             onClick={onBack}
-            className="flex items-center gap-1.5 text-xs text-[#A0A0A0] hover:text-[#FF6500] transition-colors"
+            className="flex items-center gap-1.5 text-xs text-cv-secondary hover:text-cv-accent transition-colors"
           >
             <span className="material-symbols-outlined text-[16px]">arrow_back</span>
             <span className="hidden sm:inline font-medium">Showtimes</span>
           </button>
-          <span className="text-[#222222]">|</span>
+          <span className="text-cv-border">|</span>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-white">{movie.title}</span>
+            <span className="text-xs font-semibold text-cv-primary">{movie.title}</span>
             <Badge variant="outline" size="sm">
               {show.displayTime || show.startTime}
             </Badge>
@@ -192,45 +193,45 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
         </div>
 
         {/* Center: Clean Seat Legend */}
-        <div className="pointer-events-auto hidden lg:flex items-center gap-5 backdrop-blur-xl px-5 py-2 rounded-full border border-[#222222] bg-[#111111]/90 shadow-md text-xs">
+        <div className="pointer-events-auto hidden lg:flex items-center gap-5 backdrop-blur-xl px-5 py-2 rounded-full border border-cv-border bg-cv-surface/95 shadow-card-subtle text-xs">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#707070]" />
-            <span className="text-[#A0A0A0]">Available</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#9A968E] dark:bg-[#707070]" />
+            <span className="text-cv-secondary">Available</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#FF6500] shadow-[0_0_8px_#FF6500]" />
-            <span className="text-[#FF6500] font-semibold">Selected ({selectedSeatCodes.length})</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-cv-accent shadow-[0_0_8px_rgb(var(--cv-accent-rgb))]" />
+            <span className="text-cv-accent font-semibold">Selected ({selectedSeatCodes.length})</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#222222]" />
-            <span className="text-[#707070]">Occupied</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#D6D3CB] dark:bg-[#222222]" />
+            <span className="text-cv-muted">Occupied</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#0284C7]" />
-            <span className="text-sky-400">Premium</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-sky-600 dark:bg-[#0284C7]" />
+            <span className="text-sky-700 dark:text-sky-400">Premium</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#B94700]" />
-            <span className="text-amber-400">VIP Suite</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-700 dark:bg-[#B94700]" />
+            <span className="text-amber-800 dark:text-amber-400">VIP Suite</span>
           </div>
         </div>
 
         {/* Right: Technical Spec & Drawer Toggle */}
         <div className="pointer-events-auto flex items-center gap-2.5">
           {/* Seat Hold Timer */}
-          <div className="flex items-center gap-2 backdrop-blur-xl px-3.5 py-2 rounded-full border border-[#222222] bg-[#111111]/90 text-xs">
-            <span className="material-symbols-outlined text-[#FF6500] text-[16px] animate-pulse">lock_clock</span>
-            <span className="text-[#A0A0A0] hidden sm:inline">Hold:</span>
-            <span className="font-mono font-bold text-white">{formatTimer(holdSeconds)}</span>
+          <div className="flex items-center gap-2 backdrop-blur-xl px-3.5 py-2 rounded-full border border-cv-border bg-cv-surface/95 shadow-card-subtle text-xs">
+            <span className="material-symbols-outlined text-cv-accent text-[16px] animate-pulse">lock_clock</span>
+            <span className="text-cv-secondary hidden sm:inline">Hold:</span>
+            <span className="font-mono font-bold text-cv-primary">{formatTimer(holdSeconds)}</span>
           </div>
 
           {/* Toggle Booking Drawer Button */}
           <button
             onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-xl transition-all border text-xs font-semibold ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-xl transition-all border text-xs font-semibold shadow-card-subtle ${
               isDrawerOpen
-                ? 'bg-[#FF6500] text-white border-[#FF6500] shadow-glow-orange-sm'
-                : 'bg-[#111111]/95 text-white hover:bg-[#181818] border-[#222222] hover:border-white/20'
+                ? 'bg-cv-accent text-white border-cv-accent shadow-glow-orange-sm'
+                : 'bg-cv-surface/95 text-cv-primary hover:bg-cv-elevated border-cv-border'
             }`}
           >
             <span className="material-symbols-outlined text-[18px]">
@@ -238,7 +239,7 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
             </span>
             <span>{isDrawerOpen ? 'Hide' : `Seats (${selectedSeatCodes.length})`}</span>
             {!isDrawerOpen && selectedSeatCodes.length > 0 && (
-              <span className="px-2 py-0.5 rounded-full bg-[#FF6500] text-white text-[10px] font-bold">
+              <span className="px-2 py-0.5 rounded-full bg-cv-accent text-white text-[10px] font-bold">
                 {formatCurrency(subtotal, show.city, false)}
               </span>
             )}
@@ -249,28 +250,28 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
       {/* BOTTOM ACTION BAR: 2D Confirm Dock -> Automatically Transitions to 3D */}
       {is2DView ? (
         <div className="absolute bottom-4 left-4 right-4 md:left-8 md:right-8 z-20 pointer-events-auto">
-          <div className="max-w-5xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-3.5 rounded-2xl backdrop-blur-2xl border border-[#222222] bg-[#111111]/95 shadow-[0_20px_50px_rgba(0,0,0,0.92)]">
+          <div className="max-w-5xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-3.5 rounded-2xl backdrop-blur-2xl border border-cv-border bg-cv-surface/95 shadow-elevated-xl">
             <div className="flex flex-col gap-0.5 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#FF6500]">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-cv-accent">
                   Step 1 &bull; 2D Seat Plan
                 </span>
                 {selectedSeatCodes.length > 0 && (
-                  <span className="text-[11px] font-bold text-white">
+                  <span className="text-[11px] font-bold text-cv-primary">
                     &bull; {formatCurrency(subtotal, show.city)}
                   </span>
                 )}
               </div>
               {selectedSeatCodes.length === 0 ? (
-                <span className="text-xs text-[#A0A0A0]">
+                <span className="text-xs text-cv-secondary">
                   Tap available seats on the 2D layout, then press Confirm to enter the 3D auditorium.
                 </span>
               ) : (
-                <div className="flex items-center gap-1.5 text-xs text-white truncate">
-                  <span className="text-[#A0A0A0] shrink-0">
+                <div className="flex items-center gap-1.5 text-xs text-cv-primary truncate">
+                  <span className="text-cv-secondary shrink-0">
                     Selected ({selectedSeatCodes.length}):
                   </span>
-                  <span className="font-semibold text-[#FF6500] truncate">
+                  <span className="font-semibold text-cv-accent truncate">
                     {selectedSeatCodes.join(', ')}
                   </span>
                 </div>
@@ -297,9 +298,9 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
           <div className="absolute bottom-24 xl:bottom-6 left-4 md:left-8 z-20 pointer-events-auto">
             <button
               onClick={() => setIs2DView(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-xl text-xs font-semibold tracking-wide transition-all shadow-card-subtle border border-[#222222] bg-[#111111]/90 text-white hover:bg-[#181818] hover:border-[#FF6500]/50"
+              className="flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-xl text-xs font-semibold tracking-wide transition-all shadow-card-subtle border border-cv-border bg-cv-surface/95 text-cv-primary hover:bg-cv-elevated hover:border-cv-accent/50"
             >
-              <span className="material-symbols-outlined text-[#FF6500] text-[18px]">
+              <span className="material-symbols-outlined text-cv-accent text-[18px]">
                 grid_view
               </span>
               <span className="font-semibold">Back to 2D Plan</span>
@@ -324,12 +325,12 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
       {/* Error Message Floating Banner */}
       {holdError && (
         <div className="absolute top-20 left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#181818] border border-red-500/50 text-red-400 text-xs font-medium shadow-xl">
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-cv-surface border border-red-500/40 text-red-600 dark:text-red-400 text-xs font-medium shadow-elevated-xl">
             <span className="material-symbols-outlined text-[16px]">error</span>
             <span>{holdError}</span>
             <button
               onClick={() => setHoldError(null)}
-              className="ml-2 text-white/50 hover:text-white"
+              className="ml-2 text-cv-muted hover:text-cv-primary"
             >
               &times;
             </button>
@@ -343,53 +344,53 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
           isDrawerOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        <div className="h-full flex flex-col justify-between p-6 rounded-3xl backdrop-blur-2xl shadow-[0_24px_70px_rgba(0,0,0,0.95)] border border-[#222222] bg-[#111111]/98 text-white overflow-y-auto">
+        <div className="h-full flex flex-col justify-between p-6 rounded-3xl backdrop-blur-2xl shadow-elevated-xl border border-cv-border bg-cv-surface/98 text-cv-primary overflow-y-auto">
           {/* Top Section */}
           <div className="flex flex-col gap-5">
             {/* Header with Title and Close Button */}
-            <div className="flex items-center justify-between pb-3 border-b border-[#222222]">
+            <div className="flex items-center justify-between pb-3 border-b border-cv-border">
               <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded-lg bg-[#FF6500]/15 flex items-center justify-center border border-[#FF6500]/30 text-[#FF6500]">
+                <div className="w-7 h-7 rounded-lg bg-cv-accent/15 flex items-center justify-center border border-cv-accent/30 text-cv-accent">
                   <span className="material-symbols-outlined text-[18px]">confirmation_number</span>
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                  <h3 className="text-sm font-bold text-cv-primary uppercase tracking-wider">
                     Booking Summary
                   </h3>
-                  <span className="text-[10px] text-[#707070]">
+                  <span className="text-[10px] text-cv-muted">
                     {selectedSeatCodes.length} seat(s) reserved
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => setIsDrawerOpen(false)}
-                className="w-8 h-8 rounded-full bg-[#181818] hover:bg-[#222222] flex items-center justify-center text-[#A0A0A0] hover:text-white transition-colors border border-[#222222]"
+                className="w-8 h-8 rounded-full bg-cv-elevated hover:bg-cv-border flex items-center justify-center text-cv-secondary hover:text-cv-primary transition-colors border border-cv-border"
               >
                 <span className="material-symbols-outlined text-[18px]">close</span>
               </button>
             </div>
 
             {/* Film Overview */}
-            <div className="flex gap-3 p-3.5 rounded-2xl bg-[#181818] border border-[#222222]">
+            <div className="flex gap-3 p-3.5 rounded-2xl bg-cv-elevated border border-cv-border">
               <img
                 alt={movie.title}
                 src={movie.posterUrl}
-                className="w-12 h-16 object-cover rounded-lg border border-white/5"
+                className="w-12 h-16 object-cover rounded-lg border border-cv-border"
               />
               <div className="flex flex-col justify-center gap-0.5">
-                <h4 className="text-xs font-bold text-white line-clamp-1">{movie.title}</h4>
-                <span className="text-[11px] text-[#A0A0A0]">{show.branchName}</span>
-                <span className="text-[10px] text-[#FF6500] font-semibold">{show.screenName}</span>
+                <h4 className="text-xs font-bold text-cv-primary line-clamp-1">{movie.title}</h4>
+                <span className="text-[11px] text-cv-secondary">{show.branchName}</span>
+                <span className="text-[10px] text-cv-accent font-semibold">{show.screenName}</span>
               </div>
             </div>
 
             {/* Selected Seats Pills */}
             <div className="flex flex-col gap-2">
-              <span className="text-[11px] font-semibold text-[#707070] uppercase tracking-wider">
+              <span className="text-[11px] font-semibold text-cv-muted uppercase tracking-wider">
                 Reserved Seats
               </span>
               {selectedSeatCodes.length === 0 ? (
-                <div className="p-4 rounded-xl bg-[#181818] border border-dashed border-[#222222] text-center text-xs text-[#707070]">
+                <div className="p-4 rounded-xl bg-cv-elevated border border-dashed border-cv-border text-center text-xs text-cv-muted">
                   Click on any seat in the 3D or 2D auditorium to select.
                 </div>
               ) : (
@@ -399,15 +400,15 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
                     return (
                       <div
                         key={code}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#181818] border border-[#222222] text-xs font-medium text-white"
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-cv-elevated border border-cv-border text-xs font-medium text-cv-primary"
                       >
-                        <span className="font-bold text-[#FF6500]">{code}</span>
-                        <span className="text-[10px] text-[#707070]">{seat?.tier || 'Standard'}</span>
-                        <span className="text-white/40">&bull;</span>
+                        <span className="font-bold text-cv-accent">{code}</span>
+                        <span className="text-[10px] text-cv-muted">{seat?.tier || 'Standard'}</span>
+                        <span className="text-cv-border">&bull;</span>
                         <span className="text-xs font-semibold">{formatCurrency(seat?.price ?? (show.pricing?.STANDARD || 190), show.city)}</span>
                         <button
                           onClick={() => toggleSeat(code)}
-                          className="text-[#707070] hover:text-red-400 ml-1 text-xs"
+                          className="text-cv-muted hover:text-red-500 ml-1 text-xs"
                         >
                           &times;
                         </button>
@@ -419,28 +420,28 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
             </div>
 
             {/* Price Breakdown */}
-            <div className="flex flex-col gap-2 pt-4 border-t border-[#222222] text-xs">
-              <div className="flex justify-between text-[#A0A0A0]">
+            <div className="flex flex-col gap-2 pt-4 border-t border-cv-border text-xs">
+              <div className="flex justify-between text-cv-secondary">
                 <span>Tickets ({selectedSeatCodes.length})</span>
-                <span className="text-white font-medium">{formatCurrency(subtotal, show.city)}</span>
+                <span className="text-cv-primary font-medium">{formatCurrency(subtotal, show.city)}</span>
               </div>
-              <div className="flex justify-between text-[#A0A0A0]">
+              <div className="flex justify-between text-cv-secondary">
                 <span>Convenience Fee</span>
-                <span className="text-emerald-400 font-medium">FREE</span>
+                <span className="text-emerald-700 dark:text-emerald-400 font-medium">FREE</span>
               </div>
-              <div className="flex justify-between text-[#A0A0A0]">
+              <div className="flex justify-between text-cv-secondary">
                 <span>Estimated VAT (18%)</span>
-                <span className="text-white font-medium">{formatCurrency(subtotal * 0.18, show.city)}</span>
+                <span className="text-cv-primary font-medium">{formatCurrency(subtotal * 0.18, show.city)}</span>
               </div>
-              <div className="flex justify-between pt-2 border-t border-[#222222] text-sm font-bold text-white">
+              <div className="flex justify-between pt-2 border-t border-cv-border text-sm font-bold text-cv-primary">
                 <span>Total Amount</span>
-                <span className="text-[#FF6500] text-base">{formatCurrency(subtotal * 1.18, show.city)}</span>
+                <span className="text-cv-accent text-base">{formatCurrency(subtotal * 1.18, show.city)}</span>
               </div>
             </div>
           </div>
 
           {/* Drawer Bottom CTA */}
-          <div className="pt-6 border-t border-[#222222]">
+          <div className="pt-6 border-t border-cv-border">
             {is2DView ? (
               <Button
                 onClick={handleConfirm2DSeats}

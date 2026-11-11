@@ -50,18 +50,18 @@ export const Modal: React.FC<ModalProps> = ({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 dark:bg-black/85 backdrop-blur-md animate-fade-in"
       onClick={onClose}
     >
       <div
-        className={`relative w-full ${maxWidthStyles[maxWidth]} bg-[#111111] border border-[#222222] rounded-3xl p-6 sm:p-8 shadow-[0_24px_70px_rgba(0,0,0,0.95)] flex flex-col gap-6 text-white`}
+        className={`relative w-full ${maxWidthStyles[maxWidth]} bg-cv-surface border border-cv-border rounded-3xl p-6 sm:p-8 shadow-elevated-xl flex flex-col gap-6 text-cv-primary`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Icon Button */}
         <button
           onClick={onClose}
           aria-label="Close dialog"
-          className="absolute top-5 right-5 w-8 h-8 rounded-full bg-[#181818] hover:bg-[#222222] text-[#A0A0A0] hover:text-white flex items-center justify-center transition-colors border border-[#222222]"
+          className="absolute top-5 right-5 w-8 h-8 rounded-full bg-cv-elevated hover:bg-cv-elevated-hover text-cv-secondary hover:text-cv-primary flex items-center justify-center transition-colors border border-cv-border"
         >
           <span className="material-symbols-outlined text-[18px]">close</span>
         </button>
@@ -70,12 +70,12 @@ export const Modal: React.FC<ModalProps> = ({
         {(title || subtitle) && (
           <div className="flex flex-col gap-1 pr-8">
             {subtitle && (
-              <span className="text-[11px] font-semibold text-[#FF6500] uppercase tracking-wider">
+              <span className="text-[11px] font-semibold text-cv-accent uppercase tracking-wider">
                 {subtitle}
               </span>
             )}
             {title && (
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-cv-primary">
                 {title}
               </h2>
             )}

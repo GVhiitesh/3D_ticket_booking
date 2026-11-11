@@ -116,34 +116,34 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#050505] text-white pt-28 pb-20 px-5 md:px-12 flex justify-center">
+    <div className="w-full min-h-screen bg-cv-bg text-cv-primary pt-28 pb-20 px-5 md:px-12 flex justify-center transition-colors duration-200">
       <div className="w-full max-w-5xl flex flex-col gap-8">
         {/* Top Header & Hold Banner */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-3xl bg-[#111111] border border-[#222222] shadow-card-subtle">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-3xl bg-cv-surface border border-cv-border shadow-card-subtle">
           <div className="flex items-center gap-3">
             <button
               onClick={onBack}
               aria-label="Back to seat selection"
-              className="w-9 h-9 rounded-full bg-[#181818] hover:bg-[#222222] flex items-center justify-center text-white transition-colors border border-[#222222]"
+              className="w-9 h-9 rounded-full bg-cv-elevated hover:bg-cv-elevated-hover flex items-center justify-center text-cv-primary transition-colors border border-cv-border"
             >
               <span className="material-symbols-outlined text-[18px]">arrow_back</span>
             </button>
             <div>
-              <span className="text-[10px] text-[#FF6500] uppercase font-bold tracking-wider block">
+              <span className="text-[10px] text-cv-accent uppercase font-bold tracking-wider block">
                 Order Review &amp; Payment
               </span>
-              <h1 className="text-xl font-bold text-white tracking-tight">
+              <h1 className="text-xl font-bold text-cv-primary tracking-tight">
                 Finalize Ticket Booking
               </h1>
             </div>
           </div>
 
           {/* Countdown Clock */}
-          <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#181818] border border-[#FF6500]/30 shadow-glow-orange-sm self-start sm:self-auto">
-            <span className="material-symbols-outlined text-[#FF6500] text-[18px] animate-pulse">lock_clock</span>
+          <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-cv-elevated border border-cv-accent/30 shadow-glow-orange-sm self-start sm:self-auto">
+            <span className="material-symbols-outlined text-cv-accent text-[18px] animate-pulse">lock_clock</span>
             <div className="text-xs">
-              <span className="text-[#A0A0A0]">Hold Window: </span>
-              <strong className="text-white font-mono text-sm ml-1">{formatTimer(holdSeconds)}</strong>
+              <span className="text-cv-secondary">Hold Window: </span>
+              <strong className="text-cv-primary font-mono text-sm ml-1">{formatTimer(holdSeconds)}</strong>
             </div>
           </div>
         </div>
@@ -153,10 +153,10 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
           {/* Left Column: Customer info & Payment Methods (7 cols) */}
           <div className="lg:col-span-7 flex flex-col gap-6">
             {/* Contact Details Card */}
-            <div className="p-6 rounded-3xl bg-[#111111] border border-[#222222] flex flex-col gap-5 shadow-card-subtle">
-              <div className="flex items-center gap-2.5 pb-3 border-b border-[#222222]">
-                <span className="material-symbols-outlined text-[#FF6500] text-[20px]">badge</span>
-                <h3 className="text-base font-bold text-white">
+            <div className="p-6 rounded-3xl bg-cv-surface border border-cv-border flex flex-col gap-5 shadow-card-subtle">
+              <div className="flex items-center gap-2.5 pb-3 border-b border-cv-border">
+                <span className="material-symbols-outlined text-cv-accent text-[20px]">badge</span>
+                <h3 className="text-base font-bold text-cv-primary">
                   Ticket Delivery &amp; Contact Details
                 </h3>
               </div>
@@ -192,10 +192,10 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
             </div>
 
             {/* Payment Method Selector */}
-            <div className="p-6 rounded-3xl bg-[#111111] border border-[#222222] flex flex-col gap-5 shadow-card-subtle">
-              <div className="flex items-center gap-2.5 pb-3 border-b border-[#222222]">
-                <span className="material-symbols-outlined text-[#FF6500] text-[20px]">payments</span>
-                <h3 className="text-base font-bold text-white">
+            <div className="p-6 rounded-3xl bg-cv-surface border border-cv-border flex flex-col gap-5 shadow-card-subtle">
+              <div className="flex items-center gap-2.5 pb-3 border-b border-cv-border">
+                <span className="material-symbols-outlined text-cv-accent text-[20px]">payments</span>
+                <h3 className="text-base font-bold text-cv-primary">
                   Payment Method
                 </h3>
               </div>
@@ -212,11 +212,11 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                     onClick={() => setPaymentMethod(pm.id as any)}
                     className={`p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all border ${
                       paymentMethod === pm.id
-                        ? 'bg-[#181818] border-[#FF6500] text-white shadow-sm'
-                        : 'bg-[#0B0B0B] border-[#222222] text-[#A0A0A0] hover:text-white hover:border-white/20'
+                        ? 'bg-cv-elevated border-cv-accent text-cv-primary shadow-sm'
+                        : 'bg-cv-bg-subtle border-cv-border text-cv-secondary hover:text-cv-primary hover:border-cv-border-hover'
                     }`}
                   >
-                    <span className={`material-symbols-outlined text-[24px] ${paymentMethod === pm.id ? 'text-[#FF6500]' : ''}`}>
+                    <span className={`material-symbols-outlined text-[24px] ${paymentMethod === pm.id ? 'text-cv-accent' : ''}`}>
                       {pm.icon}
                     </span>
                     <span className="text-xs font-semibold">{pm.label}</span>
@@ -224,8 +224,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                 ))}
               </div>
 
-              <div className="p-4 rounded-2xl bg-[#0B0B0B] border border-[#222222] flex items-center gap-3 text-xs text-[#A0A0A0]">
-                <span className="material-symbols-outlined text-[#FF6500] text-[20px]">verified_user</span>
+              <div className="p-4 rounded-2xl bg-cv-bg-subtle border border-cv-border flex items-center gap-3 text-xs text-cv-secondary">
+                <span className="material-symbols-outlined text-cv-accent text-[20px]">verified_user</span>
                 <span>256-bit SSL encrypted PCI-DSS compliant checkout session.</span>
               </div>
             </div>
@@ -233,9 +233,9 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
           {/* Right Column: Order Review Card (5 cols) */}
           <div className="lg:col-span-5 flex flex-col gap-6">
-            <div className="p-6 rounded-3xl bg-[#111111] border border-[#222222] flex flex-col gap-5 shadow-card-subtle sticky top-28">
-              <div className="flex items-center justify-between pb-3 border-b border-[#222222]">
-                <h3 className="text-base font-bold text-white">
+            <div className="p-6 rounded-3xl bg-cv-surface border border-cv-border flex flex-col gap-5 shadow-card-subtle sticky top-28">
+              <div className="flex items-center justify-between pb-3 border-b border-cv-border">
+                <h3 className="text-base font-bold text-cv-primary">
                   Reservation Summary
                 </h3>
                 <Badge variant="brand" size="sm">
@@ -248,26 +248,26 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                 <img
                   alt={movie.title}
                   src={movie.posterUrl}
-                  className="w-14 h-20 object-cover rounded-xl border border-white/5"
+                  className="w-14 h-20 object-cover rounded-xl border border-cv-border"
                 />
                 <div className="flex flex-col justify-center gap-0.5">
-                  <h4 className="text-sm font-bold text-white line-clamp-1">{movie.title}</h4>
-                  <span className="text-xs text-[#A0A0A0]">{show.branchName}</span>
-                  <span className="text-xs text-[#FF6500] font-medium">{show.screenName}</span>
-                  <span className="text-[11px] text-[#707070]">{show.displayTime || show.startTime} &bull; {show.date}</span>
+                  <h4 className="text-sm font-bold text-cv-primary line-clamp-1">{movie.title}</h4>
+                  <span className="text-xs text-cv-secondary">{show.branchName}</span>
+                  <span className="text-xs text-cv-accent font-medium">{show.screenName}</span>
+                  <span className="text-[11px] text-cv-muted">{show.displayTime || show.startTime} &bull; {show.date}</span>
                 </div>
               </div>
 
               {/* Reserved Seats Pills */}
               <div className="flex flex-col gap-2 pt-2">
-                <span className="text-[10px] text-[#707070] uppercase tracking-wider font-semibold">
+                <span className="text-[10px] text-cv-muted uppercase tracking-wider font-semibold">
                   Reserved Seats ({selectedSeatCodes.length})
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {selectedSeatCodes.map((code) => (
                     <span
                       key={code}
-                      className="px-2.5 py-1 rounded-lg bg-[#181818] border border-[#222222] text-xs font-semibold text-white"
+                      className="px-2.5 py-1 rounded-lg bg-cv-elevated border border-cv-border text-xs font-semibold text-cv-primary"
                     >
                       Seat {code}
                     </span>
@@ -276,32 +276,32 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
               </div>
 
               {/* Pricing Breakdown */}
-              <div className="flex flex-col gap-2.5 pt-4 border-t border-[#222222] text-xs">
-                <div className="flex justify-between text-[#A0A0A0]">
+              <div className="flex flex-col gap-2.5 pt-4 border-t border-cv-border text-xs">
+                <div className="flex justify-between text-cv-secondary">
                   <span>Ticket Subtotal</span>
-                  <span className="text-white font-medium">{formatCurrency(subtotal, show.city)}</span>
+                  <span className="text-cv-primary font-medium">{formatCurrency(subtotal, show.city)}</span>
                 </div>
-                <div className="flex justify-between text-[#A0A0A0]">
+                <div className="flex justify-between text-cv-secondary">
                   <span>Online Convenience Fee</span>
-                  <span className="text-emerald-400 font-semibold">FREE</span>
+                  <span className="text-emerald-700 dark:text-emerald-400 font-semibold">FREE</span>
                 </div>
-                <div className="flex justify-between text-[#A0A0A0]">
+                <div className="flex justify-between text-cv-secondary">
                   <span>VAT &amp; Entertainment Levy (18%)</span>
-                  <span className="text-white font-medium">{formatCurrency(taxAmount, show.city)}</span>
+                  <span className="text-cv-primary font-medium">{formatCurrency(taxAmount, show.city)}</span>
                 </div>
-                <div className="flex justify-between pt-3 border-t border-[#222222] text-sm font-bold text-white">
+                <div className="flex justify-between pt-3 border-t border-cv-border text-sm font-bold text-cv-primary">
                   <span>Grand Total</span>
-                  <span className="text-xl text-[#FF6500]">{formatCurrency(totalAmount, show.city)}</span>
+                  <span className="text-xl text-cv-accent">{formatCurrency(totalAmount, show.city)}</span>
                 </div>
               </div>
 
               {/* Policy Checkbox */}
-              <label className="flex items-start gap-2.5 pt-2 text-xs text-[#A0A0A0] cursor-pointer">
+              <label className="flex items-start gap-2.5 pt-2 text-xs text-cv-secondary cursor-pointer">
                 <input
                   type="checkbox"
                   checked={agreePolicy}
                   onChange={(e) => setAgreePolicy(e.target.checked)}
-                  className="mt-0.5 accent-[#FF6500] rounded"
+                  className="mt-0.5 accent-cv-accent rounded"
                 />
                 <span>
                   I agree to CINEVA’s 100% Refundable Gate Cancellation terms up to 2 hours before curtain call.

@@ -20,7 +20,7 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyles =
-    'inline-flex items-center justify-center font-medium tracking-wide transition-all duration-200 select-none rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6500] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed';
+    'inline-flex items-center justify-center font-medium tracking-wide transition-all duration-200 select-none rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cv-accent focus-visible:ring-offset-2 focus-visible:ring-offset-cv-bg active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed';
 
   const sizeStyles = {
     sm: 'text-xs px-3.5 py-1.5 gap-1.5',
@@ -30,15 +30,15 @@ export const Button: React.FC<ButtonProps> = ({
 
   const variantStyles = {
     primary:
-      'bg-[#FF6500] hover:bg-[#FF7A1A] text-white shadow-[0_4px_20px_-2px_rgba(255,101,0,0.35)] hover:shadow-[0_6px_25px_-2px_rgba(255,101,0,0.5)] border border-transparent',
+      'bg-cv-accent hover:bg-cv-accent-hover text-white shadow-[0_4px_18px_-2px_rgb(var(--cv-accent-rgb)/0.35)] hover:shadow-[0_6px_24px_-2px_rgb(var(--cv-accent-rgb)/0.45)] border border-transparent',
     secondary:
-      'bg-[#181818] hover:bg-[#222222] text-[#FFFFFF] border border-[#222222] hover:border-white/20 shadow-sm',
+      'bg-cv-elevated hover:bg-cv-elevated-hover text-cv-primary border border-cv-border hover:border-cv-border-hover shadow-sm',
     outline:
-      'bg-transparent hover:bg-white/[0.05] text-[#A0A0A0] hover:text-white border border-[#222222] hover:border-white/20',
+      'bg-transparent hover:bg-cv-primary/[0.05] text-cv-secondary hover:text-cv-primary border border-cv-border hover:border-cv-border-hover',
     ghost:
-      'bg-transparent hover:bg-white/[0.06] text-[#A0A0A0] hover:text-white border border-transparent',
+      'bg-transparent hover:bg-cv-primary/[0.06] text-cv-secondary hover:text-cv-primary border border-transparent',
     danger:
-      'bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30',
+      'bg-red-500/15 hover:bg-red-500/25 text-red-600 dark:text-red-400 border border-red-500/30',
   };
 
   return (

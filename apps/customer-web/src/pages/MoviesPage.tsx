@@ -33,26 +33,26 @@ export const MoviesPage: React.FC<MoviesPageProps> = ({ movies, onSelectMovie })
   });
 
   return (
-    <div className="w-full min-h-screen bg-[#050505] text-white pt-28 pb-20 px-5 md:px-12">
+    <div className="w-full min-h-screen bg-cv-bg text-cv-primary pt-28 pb-20 px-5 md:px-12 transition-colors duration-200">
       <div className="max-w-7xl mx-auto flex flex-col gap-8">
         {/* Page Header */}
         <div className="flex flex-col gap-2 max-w-3xl">
-          <span className="text-xs text-[#FF6500] font-semibold tracking-wider uppercase">
+          <span className="text-xs text-cv-accent font-semibold tracking-wider uppercase">
             Film Discovery &amp; Exhibition Formats
           </span>
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-cv-primary">
             Discover Cinema
           </h1>
-          <p className="text-sm text-[#A0A0A0] leading-relaxed">
+          <p className="text-sm text-cv-secondary leading-relaxed">
             Theatrical catalog projected in authentic 70mm film stock, IMAX Dual Laser, and 64-channel spatial sound.
           </p>
         </div>
 
         {/* Search & Filter Bar */}
-        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 p-4 rounded-2xl bg-[#111111] border border-[#222222] shadow-card-subtle">
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 p-4 rounded-2xl bg-cv-surface border border-cv-border shadow-card-subtle">
           {/* Search Field */}
           <div className="relative flex items-center flex-1">
-            <span className="material-symbols-outlined text-[#707070] absolute left-3.5 text-[20px]">
+            <span className="material-symbols-outlined text-cv-muted absolute left-3.5 text-[20px]">
               search
             </span>
             <input
@@ -60,12 +60,12 @@ export const MoviesPage: React.FC<MoviesPageProps> = ({ movies, onSelectMovie })
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by title, director, or cast..."
-              className="w-full bg-[#0B0B0B] text-white placeholder-[#707070] text-sm pl-10 pr-4 py-2.5 rounded-xl border border-[#222222] focus:outline-none focus:border-[#FF6500] transition-colors"
+              className="w-full bg-cv-bg-subtle text-cv-primary placeholder-cv-muted text-sm pl-10 pr-4 py-2.5 rounded-xl border border-cv-border focus:outline-none focus:border-cv-accent transition-colors"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3.5 text-[#707070] hover:text-white text-xs"
+                className="absolute right-3.5 text-cv-muted hover:text-cv-primary text-xs"
               >
                 &times;
               </button>
@@ -80,8 +80,8 @@ export const MoviesPage: React.FC<MoviesPageProps> = ({ movies, onSelectMovie })
                 onClick={() => setSelectedGenre(g)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                   selectedGenre === g
-                    ? 'bg-[#181818] text-white font-semibold border border-[#FF6500]/50 shadow-sm'
-                    : 'bg-[#141414] text-[#A0A0A0] hover:text-white border border-[#222222]'
+                    ? 'bg-cv-elevated text-cv-primary font-semibold border border-cv-accent/50 shadow-sm'
+                    : 'bg-cv-card text-cv-secondary hover:text-cv-primary border border-cv-border'
                 }`}
               >
                 {g}
@@ -91,7 +91,7 @@ export const MoviesPage: React.FC<MoviesPageProps> = ({ movies, onSelectMovie })
         </div>
 
         {/* Results Counter */}
-        <div className="flex items-center justify-between text-xs text-[#707070]">
+        <div className="flex items-center justify-between text-xs text-cv-muted">
           <span>Showing {filtered.length} of {movies.length} films</span>
           {(searchQuery || selectedGenre !== 'All' || selectedFormat !== 'All') && (
             <button
@@ -100,7 +100,7 @@ export const MoviesPage: React.FC<MoviesPageProps> = ({ movies, onSelectMovie })
                 setSelectedGenre('All');
                 setSelectedFormat('All');
               }}
-              className="text-[#FF6500] hover:underline"
+              className="text-cv-accent hover:underline"
             >
               Reset filters
             </button>

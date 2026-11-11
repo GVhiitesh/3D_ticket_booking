@@ -3,16 +3,68 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
+  :root,
+  html.dark {
     color-scheme: dark;
+    --cv-bg-rgb: 5 5 5;
+    --cv-bg-secondary-rgb: 10 10 10;
+    --cv-bg-subtle-rgb: 11 11 11;
+    --cv-surface-rgb: 17 17 17;
+    --cv-surface-card-rgb: 20 20 20;
+    --cv-surface-inset-rgb: 22 22 22;
+    --cv-elevated-rgb: 24 24 24;
+    --cv-elevated-hover-rgb: 34 34 34;
+    --cv-border-rgb: 34 34 34;
+    --cv-border-hover-rgb: 56 56 56;
+    --cv-primary-rgb: 255 255 255;
+    --cv-secondary-rgb: 160 160 160;
+    --cv-muted-rgb: 112 112 112;
+    --cv-subhead-rgb: 160 160 160;
+    --cv-accent-rgb: 255 101 0;
+    --cv-accent-hover-rgb: 255 122 26;
+    --cv-amber-rgb: 185 71 0;
+    --cv-ink-rgb: 24 24 24;
+    --cv-header-bg: rgba(5, 5, 5, 0.90);
+    --cv-card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.7);
+    --cv-elevated-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.95);
+    --cv-scroll-track: #0B0B0B;
+    --cv-scroll-thumb: #222222;
+  }
+
+  /* Editorial Terracotta & Gallery White Light Theme */
+  html.light {
+    color-scheme: light;
+    --cv-bg-rgb: 255 255 255;
+    --cv-bg-secondary-rgb: 248 247 244;
+    --cv-bg-subtle-rgb: 244 242 237;
+    --cv-surface-rgb: 255 255 255;
+    --cv-surface-card-rgb: 250 249 246;
+    --cv-surface-inset-rgb: 245 244 240;
+    --cv-elevated-rgb: 243 241 236;
+    --cv-elevated-hover-rgb: 232 229 221;
+    --cv-border-rgb: 229 227 221;
+    --cv-border-hover-rgb: 205 201 192;
+    --cv-primary-rgb: 20 20 20;
+    --cv-secondary-rgb: 82 82 82;
+    --cv-muted-rgb: 115 113 108;
+    --cv-subhead-rgb: 87 83 78;
+    --cv-accent-rgb: 184 59 8;
+    --cv-accent-hover-rgb: 154 48 5;
+    --cv-amber-rgb: 140 43 5;
+    --cv-ink-rgb: 20 20 20;
+    --cv-header-bg: rgba(255, 255, 255, 0.94);
+    --cv-card-shadow: 0 4px 20px -2px rgba(20, 18, 16, 0.06);
+    --cv-elevated-shadow: 0 20px 50px -12px rgba(20, 18, 16, 0.14);
+    --cv-scroll-track: #F4F2ED;
+    --cv-scroll-thumb: #D4D0C7;
   }
 
   html,
   body {
     margin: 0;
     padding: 0;
-    background-color: #050505;
-    color: #FFFFFF;
+    background-color: rgb(var(--cv-bg-rgb));
+    color: rgb(var(--cv-primary-rgb));
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
@@ -21,25 +73,25 @@
 
   /* Universal focus outline for accessible keyboard navigation */
   *:focus-visible {
-    outline: 2px solid #FF6500;
+    outline: 2px solid rgb(var(--cv-accent-rgb));
     outline-offset: 2px;
   }
 }
 
-/* Custom minimal dark scrollbars */
+/* Theme-aware scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0B0B0B;
+  background: var(--cv-scroll-track);
 }
 ::-webkit-scrollbar-thumb {
-  background: #222222;
+  background: var(--cv-scroll-thumb);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #FF6500;
+  background: rgb(var(--cv-accent-rgb));
 }
 
 /* Print stylesheet for physical ticket printing */

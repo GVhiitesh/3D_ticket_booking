@@ -433,7 +433,7 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
   selectedSeatCodes,
   onToggleSeat,
   interactive = true,
-  theme = 'light',
+  theme = 'dark',
   city,
 }) => {
   const isLight = theme === 'light';
@@ -466,8 +466,8 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
 
     // 1. SCENE
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x090c14);
-    scene.fog = new THREE.FogExp2(0x090c14, 0.009);
+    scene.background = new THREE.Color(isLight ? 0xf3f1ec : 0x090c14);
+    scene.fog = new THREE.FogExp2(isLight ? 0xf3f1ec : 0x090c14, isLight ? 0.0052 : 0.009);
 
     // 2. CAMERA
     const camera = new THREE.PerspectiveCamera(48, width / height, 0.1, 1000);
@@ -479,16 +479,16 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.40;
+    renderer.toneMappingExposure = isLight ? 1.08 : 1.40;
     container.appendChild(renderer.domElement);
 
     // 4. LIGHTING SETUP
     // Ambient light - crisp and architectural so auditorium depth is clear
-    const ambientLight = new THREE.AmbientLight(0x7084a4, 3.4);
+    const ambientLight = new THREE.AmbientLight(isLight ? 0xfff8f0 : 0x7084a4, isLight ? 2.2 : 3.4);
     scene.add(ambientLight);
 
     // Key Light from front-right
-    const keyLight = new THREE.DirectionalLight(0xfff7ee, 3.2);
+    const keyLight = new THREE.DirectionalLight(0xfff7ee, isLight ? 2.7 : 3.2);
     keyLight.position.set(18, 26, -5);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 2048;
@@ -497,33 +497,33 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
     scene.add(keyLight);
 
     // Fill Light from front-left
-    const fillLight = new THREE.DirectionalLight(0xa5c4e8, 2.2);
+    const fillLight = new THREE.DirectionalLight(isLight ? 0xe5eef8 : 0xa5c4e8, isLight ? 1.8 : 2.2);
     fillLight.position.set(-22, 20, 5);
     scene.add(fillLight);
 
     // Ceiling Downlights
-    const downLight = new THREE.DirectionalLight(0xffeedd, 1.8);
+    const downLight = new THREE.DirectionalLight(isLight ? 0xffffff : 0xffeedd, isLight ? 1.4 : 1.8);
     downLight.position.set(0, 30, 4);
     scene.add(downLight);
 
     // Projector Spotlight from rear booth window, converging directly onto screen center
-    const projectorSpot = new THREE.SpotLight(0xaad5ff, 5.2, 90, Math.PI / 4, 0.45, 1.0);
+    const projectorSpot = new THREE.SpotLight(0xaad5ff, isLight ? 3.4 : 5.2, 90, Math.PI / 4, 0.45, 1.0);
     projectorSpot.position.set(0, 18.0, 18.8);
     projectorSpot.target.position.set(0, 9.5, -24.0);
     scene.add(projectorSpot);
     scene.add(projectorSpot.target);
 
-    // Screen Center Bounce Light (reflects subtle blue-cyan premiere glow back onto audience)
-    const screenBounce = new THREE.PointLight(0x38bdf8, 3.2, 42);
+    // Screen Center Bounce Light (reflects subtle premiere glow back onto audience)
+    const screenBounce = new THREE.PointLight(isLight ? 0xb83b08 : 0x38bdf8, isLight ? 2.0 : 3.2, 42);
     screenBounce.position.set(0, 9.5, -20.0);
     scene.add(screenBounce);
 
-    // Radial Aisles Floor Accent Lights (Warm Amber)
-    const aisleLightL = new THREE.PointLight(0xff5500, 2.6, 32);
+    // Radial Aisles Floor Accent Lights (Warm Terracotta / Amber)
+    const aisleLightL = new THREE.PointLight(isLight ? 0xb83b08 : 0xff5500, isLight ? 1.8 : 2.6, 32);
     aisleLightL.position.set(-6.5, 4.0, 2.0);
     scene.add(aisleLightL);
 
-    const aisleLightR = new THREE.PointLight(0xff5500, 2.6, 32);
+    const aisleLightR = new THREE.PointLight(isLight ? 0xb83b08 : 0xff5500, isLight ? 1.8 : 2.6, 32);
     aisleLightR.position.set(6.5, 4.0, 2.0);
     scene.add(aisleLightR);
 
@@ -533,22 +533,22 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
     scene.add(floorGroup);
 
     const riserMat = new THREE.MeshStandardMaterial({
-      color: 0x161c28,
+      color: isLight ? 0xd9d5cb : 0x161c28,
       roughness: 0.72,
-      metalness: 0.12,
+      metalness: isLight ? 0.05 : 0.12,
     });
     const stepTopMat = new THREE.MeshStandardMaterial({
-      color: 0x222a3a,
-      roughness: 0.60,
-      metalness: 0.18,
+      color: isLight ? 0xe7e3da : 0x222a3a,
+      roughness: 0.62,
+      metalness: isLight ? 0.06 : 0.18,
     });
     const walkwayMat = new THREE.MeshStandardMaterial({
-      color: 0x1b2332,
-      roughness: 0.65,
-      metalness: 0.15,
+      color: isLight ? 0xcfcac0 : 0x1b2332,
+      roughness: 0.68,
+      metalness: isLight ? 0.06 : 0.15,
     });
-    const ledMat = new THREE.MeshBasicMaterial({ color: 0xff6500 });
-    const aisleDotMat = new THREE.MeshBasicMaterial({ color: 0xff9933 });
+    const ledMat = new THREE.MeshBasicMaterial({ color: isLight ? 0xb83b08 : 0xff6500 });
+    const aisleDotMat = new THREE.MeshBasicMaterial({ color: isLight ? 0xd96126 : 0xff9933 });
 
     // Main base floor
     const baseFloorGeo = new THREE.BoxGeometry(68, 1.0, 75);
@@ -821,7 +821,10 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
     }
     topBeamGeo.setAttribute('position', new THREE.Float32BufferAttribute(topBeamPositions, 3));
     topBeamGeo.computeVertexNormals();
-    const topBeamMat = new THREE.MeshStandardMaterial({ color: 0x141820, roughness: 0.65 });
+    const topBeamMat = new THREE.MeshStandardMaterial({
+      color: isLight ? 0x2a2825 : 0x141820,
+      roughness: 0.65,
+    });
     const topBeamMesh = new THREE.Mesh(topBeamGeo, topBeamMat);
     scene.add(topBeamMesh);
 
@@ -849,7 +852,7 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
     const topLipMesh = new THREE.Mesh(topLipGeo, ledMat);
     scene.add(topLipMesh);
 
-    // Floor Optical Projection Sightlines & Focal Decal on the Stage Apron (matching in70mm.com reference)
+    // Floor Optical Projection Sightlines & Focal Decal on the Stage Apron
     const stageLineGeo = new THREE.BufferGeometry();
     const stageLinePos: number[] = [];
     for (let i = 0; i < bSegments; i++) {
@@ -873,7 +876,7 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
     const stageLineMesh = new THREE.Mesh(stageLineGeo, ledMat);
     scene.add(stageLineMesh);
 
-    // Center Optical Crosshair on Stage Floor (matching hand-drawn diagram symbol)
+    // Center Optical Crosshair on Stage Floor
     const crossGeoH = new THREE.BoxGeometry(2.4, 0.04, 0.12);
     const crossMeshH = new THREE.Mesh(crossGeoH, ledMat);
     crossMeshH.position.set(0, 0.30, -20.5);
@@ -890,18 +893,18 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
     bannerCanvas.height = 128;
     const bctx = bannerCanvas.getContext('2d');
     if (bctx) {
-      bctx.fillStyle = '#0b0e14';
+      bctx.fillStyle = isLight ? '#141414' : '#0b0e14';
       bctx.fillRect(0, 0, 1024, 128);
-      bctx.strokeStyle = '#ff6500';
+      bctx.strokeStyle = isLight ? '#b83b08' : '#ff6500';
       bctx.lineWidth = 6;
       bctx.strokeRect(6, 6, 1012, 116);
 
-      bctx.fillStyle = '#ff6500';
+      bctx.fillStyle = isLight ? '#e86a38' : '#ff6500';
       bctx.font = 'bold 42px sans-serif';
       bctx.textAlign = 'center';
       bctx.fillText('▼ 70MM CURVED SILVER SCREEN (HORIZONTALLY CENTRED) ▼', 512, 60);
 
-      bctx.fillStyle = '#a0aec0';
+      bctx.fillStyle = '#e5e3dd';
       bctx.font = '26px sans-serif';
       bctx.fillText('ALL EYES THIS WAY • OPTIMUM PROJECTION AXIS', 512, 100);
     }
@@ -915,9 +918,9 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
 
     // 7. FAN-SHAPED SPLAYED ACOUSTIC WALLS (Widening from front to rear as per sketch)
     const wallMat = new THREE.MeshStandardMaterial({
-      color: isLight ? 0x222a3a : 0x0f1116,
-      roughness: isLight ? 0.78 : 0.85,
-      metalness: 0.15,
+      color: isLight ? 0xdbd6cc : 0x0f1116,
+      roughness: isLight ? 0.82 : 0.85,
+      metalness: isLight ? 0.04 : 0.15,
     });
 
     for (const side of [-1, 1]) {
@@ -1004,53 +1007,53 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
     const seatGroup = new THREE.Group();
     scene.add(seatGroup);
 
-    // Available Standard: Deep midnight titanium leather
+    // Available Standard: Tailored obsidian charcoal (light) / midnight titanium (dark)
     const matAvailable = new THREE.MeshStandardMaterial({
-      color: 0x242d3d,
-      roughness: 0.42,
-      metalness: 0.16,
+      color: isLight ? 0x2a2927 : 0x242d3d,
+      roughness: 0.44,
+      metalness: isLight ? 0.08 : 0.16,
     });
 
-    // Premium Available: Royal sapphire navy
+    // Premium Available: Slate sapphire navy
     const matPremium = new THREE.MeshStandardMaterial({
-      color: 0x1e3658,
+      color: isLight ? 0x1e4068 : 0x1e3658,
       roughness: 0.36,
-      metalness: 0.22,
+      metalness: 0.2,
     });
 
-    // Selected: Luminous CINEVA vermilion blaze
+    // Selected: Luminous CINEVA terracotta (light) / vermilion blaze (dark)
     const matSelected = new THREE.MeshStandardMaterial({
-      color: 0xff5500,
-      emissive: 0xff3300,
-      emissiveIntensity: 0.65,
+      color: isLight ? 0xb83b08 : 0xff5500,
+      emissive: isLight ? 0x9a3005 : 0xff3300,
+      emissiveIntensity: isLight ? 0.45 : 0.65,
       roughness: 0.28,
       metalness: 0.2,
     });
 
-    // Occupied: Matte graphite
+    // Occupied: Muted stone grey (light) / matte graphite (dark)
     const matOccupied = new THREE.MeshStandardMaterial({
-      color: 0x131720,
+      color: isLight ? 0xc2beb4 : 0x131720,
       roughness: 0.88,
       metalness: 0.05,
     });
 
     // VIP Suite: Imperial cognac amber
     const matVip = new THREE.MeshStandardMaterial({
-      color: 0x7a3a1e,
+      color: isLight ? 0x85421b : 0x7a3a1e,
       roughness: 0.32,
-      metalness: 0.25,
+      metalness: 0.22,
     });
 
     // Metal legs / floor mount
     const matMetal = new THREE.MeshStandardMaterial({
-      color: 0x151922,
+      color: isLight ? 0x3b3834 : 0x151922,
       roughness: 0.5,
-      metalness: 0.8,
+      metalness: 0.75,
     });
 
     // Armrest top padding
     const matArmrest = new THREE.MeshStandardMaterial({
-      color: 0x1c212c,
+      color: isLight ? 0x23201d : 0x1c212c,
       roughness: 0.6,
       metalness: 0.2,
     });
@@ -1197,8 +1200,8 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
 
     // 10. CAMERA PRESETS & CONTROLS
     const presets: Record<string, { pos: [number, number, number]; lookAt: [number, number, number] }> = {
-      // 3/4 Elevated Auditorium Angle View (captures all 18 fan-curved rows, aisles, and centered Harkness screen)
-      angle: { pos: [-28.0, 22.0, 8.0], lookAt: [0, 8.0, -6.0] },
+      // 3/4 Elevated Auditorium Angle View (positioned cleanly inside the acoustic walls so all rows & curved screen are framed without wall occlusion)
+      angle: { pos: [-16.5, 22.5, 11.5], lookAt: [0, 7.5, -8.5] },
       // View from Screen looking back at audience
       screen: { pos: [0, 9.5, -20.5], lookAt: [0, 9.0, 10.0] },
       // Center VIP Seat Sightline (Row E, Seat 15 - optimum center)
@@ -1429,19 +1432,19 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
       {/* Dynamic Sightline HUD Notification (When a seat is selected and viewing from that seat) */}
       {sightlineSeat && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
-          <div className="flex items-center gap-3 px-4 py-2 rounded-full backdrop-blur-xl border border-[#FF6500]/40 shadow-[0_10px_35px_rgba(255,101,0,0.25)] animate-fade-in text-xs bg-[#111111]/95 text-white">
-            <span className="flex items-center gap-1.5 text-[#FF6500] font-semibold">
+          <div className="flex items-center gap-3 px-4 py-2 rounded-full backdrop-blur-xl border border-cv-accent/40 shadow-elevated-xl animate-fade-in text-xs bg-cv-surface/95 text-cv-primary">
+            <span className="flex items-center gap-1.5 text-cv-accent font-semibold">
               <span className="material-symbols-outlined text-[16px]">visibility</span>
               <span>Seat {sightlineSeat.seatCode} ({sightlineSeat.section || 'Auditorium'}) Sightline</span>
             </span>
-            <span className="w-px h-4 bg-white/20" />
-            <span className="text-[#A0A0A0] font-medium">
+            <span className="w-px h-4 bg-cv-border" />
+            <span className="text-cv-secondary font-medium">
               {sightlineSeat.tier} • {formatCurrency(sightlineSeat.price, city)}
             </span>
-            <span className="w-px h-4 bg-white/20" />
+            <span className="w-px h-4 bg-cv-border" />
             <button
               onClick={() => controlsRef.current?.reset()}
-              className="flex items-center gap-1 transition-colors hover:text-[#FF6500] ml-1 font-semibold text-white cursor-pointer"
+              className="flex items-center gap-1 transition-colors hover:text-cv-accent ml-1 font-semibold text-cv-primary cursor-pointer"
             >
               <span>Reset</span>
               <span className="material-symbols-outlined text-[14px]">undo</span>
@@ -1453,28 +1456,28 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
       {/* Floating Seat Tooltip on Hover */}
       {hoveredSeat && !sightlineSeat && (
         <div
-          className="absolute pointer-events-none z-30 px-3.5 py-2 rounded-xl backdrop-blur-md border border-[#222222] shadow-[0_12px_40px_rgba(0,0,0,0.85)] text-xs flex flex-col gap-1 bg-[#111111]/95 text-white"
+          className="absolute pointer-events-none z-30 px-3.5 py-2 rounded-xl backdrop-blur-md border border-cv-border shadow-elevated-xl text-xs flex flex-col gap-1 bg-cv-surface/95 text-cv-primary"
           style={{
             left: `${Math.min(window.innerWidth - 180, hoveredSeat.x + 15)}px`,
             top: `${Math.max(10, hoveredSeat.y - 65)}px`,
           }}
         >
           <div className="flex items-center gap-1.5 font-bold">
-            <span className="text-[#FF6500] text-sm">{hoveredSeat.code}</span>
-            <span className="text-[#707070]">&bull;</span>
-            <span className="text-white">
+            <span className="text-cv-accent text-sm">{hoveredSeat.code}</span>
+            <span className="text-cv-muted">&bull;</span>
+            <span className="text-cv-primary">
               {hoveredSeat.section ? `${hoveredSeat.section} Section` : hoveredSeat.tier}
             </span>
           </div>
-          <div className="flex items-center justify-between gap-3 text-[11px] text-[#A0A0A0]">
+          <div className="flex items-center justify-between gap-3 text-[11px] text-cv-secondary">
             <span>Price: {formatCurrency(hoveredSeat.price, city)}</span>
             <span
               className={
                 hoveredSeat.status === 'SELECTED'
-                  ? 'text-[#FF6500] font-semibold'
+                  ? 'text-cv-accent font-semibold'
                   : hoveredSeat.status === 'BOOKED'
-                  ? 'text-red-400 font-medium'
-                  : 'text-emerald-400 font-medium'
+                  ? 'text-red-600 dark:text-red-400 font-medium'
+                  : 'text-emerald-700 dark:text-emerald-400 font-medium'
               }
             >
               {hoveredSeat.status}
@@ -1485,13 +1488,13 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
 
       {/* Camera Controls Toolbar */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 pointer-events-auto">
-        <div className="flex items-center gap-1.5 p-1.5 backdrop-blur-xl rounded-full border border-[#222222] shadow-[0_20px_50px_rgba(0,0,0,0.85)] bg-[#111111]/95 text-white">
+        <div className="flex items-center gap-1.5 p-1.5 backdrop-blur-xl rounded-full border border-cv-border dark:border-[#222222] shadow-elevated-xl bg-cv-surface/95 dark:bg-[#111111]/95 text-cv-primary">
           <button
             onClick={() => controlsRef.current?.setPreset('angle')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
               activePreset === 'angle'
-                ? 'bg-[#181818] text-white border border-[#FF6500]/50 shadow-sm font-semibold'
-                : 'text-[#A0A0A0] hover:text-white hover:bg-white/[0.04]'
+                ? 'bg-cv-ink text-white border border-cv-ink dark:bg-[#181818] dark:border-[#FF6500]/50 shadow-sm font-semibold'
+                : 'text-cv-secondary hover:text-cv-primary hover:bg-cv-elevated dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/10'
             }`}
             title="3/4 Fan-Shaped Auditorium Angle View"
           >
@@ -1503,8 +1506,8 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
             onClick={() => controlsRef.current?.setPreset('screen')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
               activePreset === 'screen'
-                ? 'bg-[#181818] text-white border border-[#FF6500]/50 shadow-sm font-semibold'
-                : 'text-[#A0A0A0] hover:text-white hover:bg-white/[0.04]'
+                ? 'bg-cv-ink text-white border border-cv-ink dark:bg-[#181818] dark:border-[#FF6500]/50 shadow-sm font-semibold'
+                : 'text-cv-secondary hover:text-cv-primary hover:bg-cv-elevated dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/10'
             }`}
             title="View from Centered Screen facing the Fan Seating Bowl"
           >
@@ -1527,8 +1530,8 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
             }}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
               activePreset === 'pov' || activePreset.startsWith('seat-')
-                ? 'bg-[#181818] text-white border border-[#FF6500]/50 shadow-sm font-semibold'
-                : 'text-[#A0A0A0] hover:text-white hover:bg-white/[0.04]'
+                ? 'bg-cv-ink text-white border border-cv-ink dark:bg-[#181818] dark:border-[#FF6500]/50 shadow-sm font-semibold'
+                : 'text-cv-secondary hover:text-cv-primary hover:bg-cv-elevated dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/10'
             }`}
             title="Sightline View from Selected Seat facing Horizontally Centred Screen"
           >
@@ -1538,10 +1541,10 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
 
           <button
             onClick={() => controlsRef.current?.setPreset('plan')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-['Geist'] font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
               activePreset === 'plan'
-                ? 'bg-gradient-to-r from-[#ff5500] to-[#ff7a00] text-white shadow-[0_0_15px_rgba(255,85,0,0.5)] font-semibold'
-                : 'text-slate-300 hover:text-white hover:bg-white/10'
+                ? 'bg-cv-accent dark:bg-gradient-to-r dark:from-[#ff5500] dark:to-[#ff7a00] text-white shadow-glow-orange-sm dark:shadow-[0_0_15px_rgba(255,85,0,0.5)] font-semibold'
+                : 'text-cv-secondary hover:text-cv-primary hover:bg-cv-elevated dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/10'
             }`}
             title="Top-Down Fan Seating Plan (Architectural Reference View)"
           >
@@ -1549,18 +1552,18 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
             <span className="hidden sm:inline">Top Plan</span>
           </button>
 
-          <span className="w-px h-5 mx-1 bg-white/10" />
+          <span className="w-px h-5 mx-1 bg-cv-border dark:bg-[#222222]" />
 
           <button
             onClick={() => controlsRef.current?.rotateLeft()}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-300 hover:text-white hover:bg-white/10 transition-all"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-cv-secondary hover:text-cv-primary hover:bg-cv-elevated dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/10 transition-all"
             title="Rotate Left"
           >
             <span className="material-symbols-outlined text-[18px]">rotate_left</span>
           </button>
           <button
             onClick={() => controlsRef.current?.rotateRight()}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-300 hover:text-white hover:bg-white/10 transition-all"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-cv-secondary hover:text-cv-primary hover:bg-cv-elevated dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/10 transition-all"
             title="Rotate Right"
           >
             <span className="material-symbols-outlined text-[18px]">rotate_right</span>
@@ -1568,14 +1571,14 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
 
           <button
             onClick={() => controlsRef.current?.zoomIn()}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-300 hover:text-white hover:bg-white/10 transition-all"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-cv-secondary hover:text-cv-primary hover:bg-cv-elevated dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/10 transition-all"
             title="Zoom In"
           >
             <span className="material-symbols-outlined text-[18px]">add</span>
           </button>
           <button
             onClick={() => controlsRef.current?.zoomOut()}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-300 hover:text-white hover:bg-white/10 transition-all"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-cv-secondary hover:text-cv-primary hover:bg-cv-elevated dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/10 transition-all"
             title="Zoom Out"
           >
             <span className="material-symbols-outlined text-[18px]">remove</span>
@@ -1583,7 +1586,7 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
 
           <button
             onClick={() => controlsRef.current?.reset()}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-300 hover:text-white hover:bg-white/10 transition-all"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-cv-secondary hover:text-cv-primary hover:bg-cv-elevated dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/10 transition-all"
             title="Reset Camera"
           >
             <span className="material-symbols-outlined text-[18px]">restart_alt</span>

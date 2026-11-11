@@ -35,6 +35,27 @@ export function App() {
   });
 
   const [selectedCity, setSelectedCity] = useState<string>('Trichy');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    try {
+      const saved = localStorage.getItem('cineva-theme');
+      return saved === 'light' ? 'light' : 'dark';
+    } catch {
+      return 'dark';
+    }
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(theme);
+    try {
+      localStorage.setItem('cineva-theme', theme);
+    } catch {
+      // ignore storage errors
+    }
+  }, [theme]);
+
+  const toggleTheme = () => setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+
   const [authModalOpen, setAuthModalOpen] = useState<boolean>(false);
   const [trailerModalUrl, setTrailerModalUrl] = useState<string | null>(null);
   const [searchModalOpen, setSearchModalOpen] = useState<boolean>(false);
@@ -101,7 +122,7 @@ export function App() {
 
   return (
     <ToastProvider>
-      <div className="w-full min-h-screen bg-[#050505] text-[#FFFFFF] flex flex-col font-sans selection:bg-[#FF6500] selection:text-white transition-colors duration-200">
+      <div className="w-full min-h-screen bg-cv-bg text-cv-primary flex flex-col font-sans selection:bg-cv-accent selection:text-white transition-colors duration-200">
         {/* Universal Fixed Header */}
         <Header
           currentTab={currentTab}
@@ -114,6 +135,8 @@ export function App() {
           selectedCity={selectedCity}
           onSelectCity={setSelectedCity}
           onOpenSearch={() => setSearchModalOpen(true)}
+          theme={theme}
+          onToggleTheme={toggleTheme}
         />
 
         {/* Main Screen Content */}
@@ -128,6 +151,7 @@ export function App() {
               onSelectMovie={handleSelectMovie}
               onBookShow={handleBookShow}
               onOpenTrailer={(url) => setTrailerModalUrl(url)}
+              theme={theme}
             />
           )}
 
@@ -145,6 +169,7 @@ export function App() {
               onSelectShow={handleBookShow}
               onOpenTrailer={(url) => setTrailerModalUrl(url)}
               onBack={() => setCurrentTab('movies')}
+              theme={theme}
             />
           )}
 
@@ -164,6 +189,7 @@ export function App() {
               movie={selectedMovie}
               onProceedToCheckout={handleProceedToCheckout}
               onBack={() => setCurrentTab('movie-details')}
+              theme={theme}
             />
           )}
 
@@ -230,12 +256,12 @@ export function App() {
               subtitle={previewMovie ? `${previewMovie.language} • ${previewMovie.certification} • ${previewMovie.genre}` : '4K Dual Laser Presentation'}
               maxWidth="4xl"
             >
-              <div className="relative w-full aspect-video bg-[#050505] rounded-2xl overflow-hidden border border-[#222222] flex flex-col items-center justify-center p-8 text-center gap-4">
+              <div className="relative w-full aspect-video bg-[#141414] rounded-2xl overflow-hidden border border-cv-border flex flex-col items-center justify-center p-8 text-center gap-4">
                 {previewMovie?.backdropUrl && (
                   <img
                     src={previewMovie.backdropUrl}
                     alt={previewMovie.title}
-                    className="absolute inset-0 w-full h-full object-cover opacity-25"
+                    className="absolute inset-0 w-full h-full object-cover opacity-30"
                   />
                 )}
                 <div className="relative z-10 flex flex-col items-center gap-3 max-w-lg">
@@ -245,7 +271,7 @@ export function App() {
                   <h3 className="text-2xl font-bold text-white uppercase tracking-wider">
                     {previewMovie?.title || 'Featured Film'} — Theatrical Preview
                   </h3>
-                  <p className="text-xs text-[#A0A0A0] leading-relaxed">
+                  <p className="text-xs text-[#D4D4D4] leading-relaxed">
                     {previewMovie?.description ||
                       'Experience this theatrical presentation in 4K Laser projection and Dolby Atmos sound.'}
                   </p>
@@ -285,7 +311,7 @@ export function App() {
           >
             <div className="flex flex-col gap-4">
               <div className="relative flex items-center">
-                <span className="material-symbols-outlined text-[#707070] absolute left-3.5 text-[20px]">
+                <span className="material-symbols-outlined text-cv-muted absolute left-3.5 text-[20px]">
                   search
                 </span>
                 <input
@@ -294,7 +320,7 @@ export function App() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search movies, auditoriums, formats..."
-                  className="w-full bg-[#0B0B0B] text-white pl-10 pr-4 py-3 rounded-xl border border-[#222222] focus:border-[#FF6500] focus:outline-none text-sm"
+                  className="w-full bg-cv-bg-subtle text-cv-primary placeholder-cv-muted pl-10 pr-4 py-3 rounded-xl border border-cv-border focus:border-cv-accent focus:outline-none text-sm"
                 />
               </div>
 
@@ -308,20 +334,20 @@ export function App() {
                         setSearchModalOpen(false);
                         handleSelectMovie(m);
                       }}
-                      className="p-3 rounded-xl hover:bg-[#181818] cursor-pointer flex items-center justify-between transition-colors border border-transparent hover:border-[#222222]"
+                      className="p-3 rounded-xl hover:bg-cv-elevated cursor-pointer flex items-center justify-between transition-colors border border-transparent hover:border-cv-border"
                     >
                       <div className="flex items-center gap-3">
                         <img
                           alt={m.title}
                           src={m.posterUrl}
-                          className="w-9 h-13 object-cover rounded-md border border-white/5"
+                          className="w-9 h-13 object-cover rounded-md border border-cv-border"
                         />
                         <div>
-                          <div className="text-sm font-semibold text-white">{m.title}</div>
-                          <div className="text-xs text-[#707070]">{m.genre} &bull; {m.durationMins}m</div>
+                          <div className="text-sm font-semibold text-cv-primary">{m.title}</div>
+                          <div className="text-xs text-cv-muted">{m.genre} &bull; {m.durationMins}m</div>
                         </div>
                       </div>
-                      <span className="material-symbols-outlined text-[#FF6500] text-[18px]">chevron_right</span>
+                      <span className="material-symbols-outlined text-cv-accent text-[18px]">chevron_right</span>
                     </div>
                   ))}
               </div>

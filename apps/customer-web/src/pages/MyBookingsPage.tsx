@@ -33,27 +33,27 @@ export const MyBookingsPage: React.FC<MyBookingsPageProps> = ({ onBookMore, curr
   }, [currentUser]);
 
   return (
-    <div className="w-full min-h-screen bg-[#050505] text-white pt-28 pb-20 px-5 md:px-12 flex justify-center">
+    <div className="w-full min-h-screen bg-cv-bg text-cv-primary pt-28 pb-20 px-5 md:px-12 flex justify-center transition-colors duration-200">
       <div className="w-full max-w-5xl flex flex-col gap-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div className="flex flex-col gap-1">
-            <span className="text-xs text-[#FF6500] font-semibold tracking-wider uppercase">
+            <span className="text-xs text-cv-accent font-semibold tracking-wider uppercase">
               Digital Ticket Wallet
             </span>
-            <h1 className="text-3xl font-bold tracking-tight text-white">
+            <h1 className="text-3xl font-bold tracking-tight text-cv-primary">
               My Bookings
             </h1>
           </div>
 
           {/* Tab Filter */}
-          <div className="flex items-center gap-1 p-1 rounded-full bg-[#111111] border border-[#222222]">
+          <div className="flex items-center gap-1 p-1 rounded-full bg-cv-elevated border border-cv-border">
             <button
               onClick={() => setActiveTab('upcoming')}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
                 activeTab === 'upcoming'
-                  ? 'bg-[#181818] text-white border border-[#222222] shadow-sm'
-                  : 'text-[#A0A0A0] hover:text-white'
+                  ? 'bg-cv-surface text-cv-primary border border-cv-border shadow-sm'
+                  : 'text-cv-secondary hover:text-cv-primary'
               }`}
             >
               Upcoming Screenings
@@ -62,8 +62,8 @@ export const MyBookingsPage: React.FC<MyBookingsPageProps> = ({ onBookMore, curr
               onClick={() => setActiveTab('past')}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
                 activeTab === 'past'
-                  ? 'bg-[#181818] text-white border border-[#222222] shadow-sm'
-                  : 'text-[#A0A0A0] hover:text-white'
+                  ? 'bg-cv-surface text-cv-primary border border-cv-border shadow-sm'
+                  : 'text-cv-secondary hover:text-cv-primary'
               }`}
             >
               Past Archive
@@ -85,7 +85,7 @@ export const MyBookingsPage: React.FC<MyBookingsPageProps> = ({ onBookMore, curr
             {bookings.map((booking) => (
               <div
                 key={booking.id}
-                className="p-6 rounded-2xl bg-[#111111] border border-[#222222] hover:border-white/20 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-6 shadow-card-subtle transition-all"
+                className="p-6 rounded-2xl bg-cv-surface border border-cv-border hover:border-cv-accent/40 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-6 shadow-card-subtle transition-all"
               >
                 {/* Film Thumbnail & Info */}
                 <div className="flex items-center gap-4">
@@ -96,46 +96,46 @@ export const MyBookingsPage: React.FC<MyBookingsPageProps> = ({ onBookMore, curr
                       e.currentTarget.src =
                         'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1000&auto=format&fit=crop';
                     }}
-                    className="w-16 h-22 object-cover rounded-xl border border-white/5 shrink-0"
+                    className="w-16 h-22 object-cover rounded-xl border border-cv-border shrink-0"
                   />
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
                       <Badge variant="brand" size="sm">
                         {booking.screenFormat}
                       </Badge>
-                      <span className="text-[11px] font-mono text-[#707070]">
+                      <span className="text-[11px] font-mono text-cv-muted">
                         REF: {booking.bookingReference}
                       </span>
                     </div>
-                    <h3 className="text-lg font-bold text-white line-clamp-1">
+                    <h3 className="text-lg font-bold text-cv-primary line-clamp-1">
                       {booking.movieTitle}
                     </h3>
-                    <span className="text-xs text-[#A0A0A0]">
+                    <span className="text-xs text-cv-secondary">
                       {booking.branchName} &bull; {booking.screenName}
                     </span>
-                    <span className="text-xs text-[#FF6500] font-semibold">
+                    <span className="text-xs text-cv-accent font-semibold">
                       {booking.date} at {booking.showTime}
                     </span>
                   </div>
                 </div>
 
                 {/* Seats and Actions */}
-                <div className="flex flex-col sm:flex-row md:flex-col lg:flex-row items-start sm:items-center md:items-end lg:items-center gap-4 pt-4 md:pt-0 border-t md:border-t-0 border-[#222222]">
+                <div className="flex flex-col sm:flex-row md:flex-col lg:flex-row items-start sm:items-center md:items-end lg:items-center gap-4 pt-4 md:pt-0 border-t md:border-t-0 border-cv-border">
                   <div className="flex flex-col gap-1 sm:text-right md:text-right">
-                    <span className="text-[11px] text-[#707070] uppercase font-semibold">
+                    <span className="text-[11px] text-cv-muted uppercase font-semibold">
                       Seats ({booking.seatCodes.length})
                     </span>
                     <div className="flex flex-wrap gap-1.5 sm:justify-end">
                       {booking.seatCodes.map((c) => (
                         <span
                           key={c}
-                          className="px-2 py-0.5 rounded bg-[#181818] border border-[#222222] text-xs font-semibold text-white"
+                          className="px-2 py-0.5 rounded bg-cv-elevated border border-cv-border text-xs font-semibold text-cv-primary"
                         >
                           {c}
                         </span>
                       ))}
                     </div>
-                    <span className="text-xs font-bold text-white mt-1">
+                    <span className="text-xs font-bold text-cv-primary mt-1">
                       Total: {formatCurrency(booking.totalAmount, booking.city)}
                     </span>
                   </div>
@@ -166,7 +166,7 @@ export const MyBookingsPage: React.FC<MyBookingsPageProps> = ({ onBookMore, curr
             maxWidth="sm"
           >
             <div className="flex flex-col items-center justify-center text-center gap-4 py-2">
-              <div className="p-4 rounded-2xl bg-white shadow-xl">
+              <div className="p-4 rounded-2xl bg-white border border-cv-border shadow-md">
                 {selectedTicketForQR.tickets?.[0]?.qrCodeDataUrl ? (
                   <img
                     alt="Entry Pass QR"
@@ -181,13 +181,13 @@ export const MyBookingsPage: React.FC<MyBookingsPageProps> = ({ onBookMore, curr
               </div>
 
               <div className="flex flex-col gap-1">
-                <span className="font-mono text-xs font-bold text-white tracking-widest">
+                <span className="font-mono text-xs font-bold text-cv-primary tracking-widest">
                   {selectedTicketForQR.tickets?.[0]?.ticketNumber || selectedTicketForQR.bookingReference}
                 </span>
-                <span className="text-xs text-[#A0A0A0]">
+                <span className="text-xs text-cv-secondary">
                   {selectedTicketForQR.branchName} &bull; {selectedTicketForQR.screenName}
                 </span>
-                <span className="text-xs text-[#FF6500] font-semibold">
+                <span className="text-xs text-cv-accent font-semibold">
                   Seats: {selectedTicketForQR.seatCodes.join(', ')}
                 </span>
               </div>

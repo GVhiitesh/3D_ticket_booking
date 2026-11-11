@@ -20,7 +20,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
   return (
     <div
       onClick={() => onSelectMovie(movie)}
-      className="group relative rounded-2xl bg-[#111111] border border-[#222222] hover:border-white/20 overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1.5 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.7)] hover:shadow-[0_20px_40px_-8px_rgba(255,101,0,0.25)] cursor-pointer"
+      className="group relative rounded-2xl bg-cv-surface border border-cv-border hover:border-cv-accent/40 overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1.5 shadow-card-subtle hover:shadow-[0_20px_40px_-10px_rgb(var(--cv-accent-rgb)/0.22)] cursor-pointer"
     >
       {/* Poster Media (Standard 3:4 Aspect Ratio) */}
       <div className="relative w-full aspect-[3/4] overflow-hidden bg-[#181818]">
@@ -33,18 +33,18 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           }}
           className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-transparent to-transparent opacity-90" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent opacity-85" />
 
         {/* Top Badges */}
         <div className="absolute top-3 left-3 flex items-center gap-1.5">
-          <Badge variant="brand" size="sm">
+          <Badge variant="ink" size="sm">
             {movie.badges?.[0] || '70MM EXPERIENCE'}
           </Badge>
         </div>
 
-        <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#050505]/85 backdrop-blur-md border border-white/10 text-white text-xs font-semibold">
+        <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#141414]/90 backdrop-blur-md border border-white/15 text-white text-xs font-semibold">
           <span
-            className="material-symbols-outlined text-[14px] text-[#FF6500]"
+            className="material-symbols-outlined text-[14px] text-cv-accent"
             style={{ fontVariationSettings: "'FILL' 1" }}
           >
             star
@@ -54,7 +54,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
 
         {/* Hover Quick Action Overlay */}
         <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center p-4">
-          <span className="px-5 py-2.5 rounded-full bg-[#FF6500] hover:bg-[#FF7A1A] text-white text-xs font-semibold uppercase tracking-wider shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-200">
+          <span className="px-5 py-2.5 rounded-full bg-cv-accent hover:bg-cv-accent-hover text-white text-xs font-semibold uppercase tracking-wider shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-200">
             Select Seats &rarr;
           </span>
         </div>
@@ -63,22 +63,22 @@ export const MovieCard: React.FC<MovieCardProps> = ({
       {/* Content Info */}
       <div className="p-5 flex flex-col flex-1 justify-between gap-4">
         <div className="flex flex-col gap-1.5">
-          <div className="flex items-center justify-between text-xs text-[#A0A0A0]">
+          <div className="flex items-center justify-between text-xs text-cv-secondary">
             <span>{movie.genre}</span>
             <span>{movie.durationMins}m</span>
           </div>
-          <h3 className="text-lg font-bold text-white group-hover:text-[#FF7A1A] transition-colors line-clamp-1">
+          <h3 className="text-lg font-bold text-cv-primary group-hover:text-cv-accent transition-colors line-clamp-1">
             {movie.title}
           </h3>
-          <p className="text-xs text-[#707070] line-clamp-2 leading-relaxed">
+          <p className="text-xs text-cv-muted line-clamp-2 leading-relaxed">
             {movie.description}
           </p>
         </div>
 
         {/* Showtimes Pill Row if available */}
         {movieShows.length > 0 && onBookShow && (
-          <div className="pt-3 border-t border-[#222222] flex flex-col gap-2">
-            <span className="text-[10px] uppercase tracking-wider font-semibold text-[#707070]">
+          <div className="pt-3 border-t border-cv-border flex flex-col gap-2">
+            <span className="text-[10px] uppercase tracking-wider font-semibold text-cv-muted">
               Available Showtimes
             </span>
             <div
@@ -89,11 +89,11 @@ export const MovieCard: React.FC<MovieCardProps> = ({
                 <button
                   key={show.id}
                   onClick={() => onBookShow(show)}
-                  className="px-2.5 py-1 rounded-md bg-[#181818] hover:bg-[#FF6500] hover:text-white text-[#A0A0A0] text-xs font-medium border border-[#222222] transition-colors flex items-center gap-1"
+                  className="group/btn px-2.5 py-1 rounded-md bg-cv-elevated hover:bg-cv-accent hover:text-white text-cv-secondary text-xs font-medium border border-cv-border hover:border-transparent transition-colors flex items-center gap-1"
                 >
                   <span>{show.displayTime || show.startTime}</span>
                   {(show.screenFormat.includes('3D') || show.screenFormat.includes('IMAX') || show.screenFormat.includes('PLF')) && (
-                    <span className="text-[9px] font-bold text-[#FF6500] group-hover:text-white">
+                    <span className="text-[9px] font-bold text-cv-accent group-hover/btn:text-white">
                       {show.screenFormat.includes('3D') ? '3D' : show.screenFormat.includes('IMAX') ? 'IMAX' : 'PLF'}
                     </span>
                   )}
