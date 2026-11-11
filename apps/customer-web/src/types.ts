@@ -5,15 +5,18 @@ export interface Movie {
   description: string;
   director: string;
   musicDirector: string;
+  producer?: string;
   cast: string[];
   genre: string;
   language: string;
   durationMins: number;
   certification: string;
   imdbRating: number;
+  ratingLabel?: string;
   posterUrl: string;
   backdropUrl: string;
   trailerUrl: string;
+  bookMyShowUrl?: string;
   releaseDate: string;
   status: 'NOW_SHOWING' | 'UPCOMING';
   badges: string[];
@@ -26,6 +29,7 @@ export interface Branch {
   address: string;
   screensCount: number;
   formats: string[];
+  facilities?: string[];
 }
 
 export interface Show {
@@ -41,6 +45,9 @@ export interface Show {
   date: string;
   startTime: string;
   endTime: string;
+  displayTime?: string;
+  cancellable?: boolean;
+  priceCategories?: string;
   pricing: {
     STANDARD: number;
     PREMIUM: number;

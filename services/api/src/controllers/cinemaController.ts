@@ -104,12 +104,17 @@ export const createCheckoutOrder = async (req: Request, res: Response) => {
     let subtotal = 0;
     for (const code of seatCodes) {
       const seat = layout.seats.find((s) => s.seatCode === code);
-      subtotal += seat?.price || 28.0;
+      subtotal += seat?.price || layout.show.pricing.STANDARD;
     }
 
     const convenienceFee = 0.0;
     const taxAmount = +(subtotal * 0.18).toFixed(2);
     const totalAmount = +(subtotal + convenienceFee + taxAmount).toFixed(2);
+    const currency = ['Trichy', 'Bengaluru', 'Mumbai'].includes(layout.show.city)
+      ? 'INR'
+      : layout.show.city === 'New York'
+      ? 'USD'
+      : 'GBP';
 
     const gatewayOrderId = `order_${crypto.randomUUID().substring(0, 14)}`;
 
@@ -118,7 +123,7 @@ export const createCheckoutOrder = async (req: Request, res: Response) => {
       data: {
         gatewayOrderId,
         amount: totalAmount,
-        currency: 'GBP', // or INR
+        currency,
         subtotal,
         convenienceFee,
         taxAmount,

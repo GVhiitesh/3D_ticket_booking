@@ -4,6 +4,7 @@ import { Auditorium3D } from '../components/Auditorium3D';
 import { Auditorium2D } from '../components/Auditorium2D';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
+import { formatCurrency } from '../utils/currency';
 
 interface SeatSelectionPageProps {
   show: Show;
@@ -20,15 +21,23 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
   onBack,
 }) => {
   const [seats, setSeats] = useState<SeatNode[]>([]);
-  const [selectedSeatCodes, setSelectedSeatCodes] = useState<string[]>(['E-9', 'E-10']);
-  const [is2DView, setIs2DView] = useState<boolean>(false);
+  const [selectedSeatCodes, setSelectedSeatCodes] = useState<string[]>([]);
+  const [is2DView, setIs2DView] = useState<boolean>(true);
+  const [confirmedFrom2D, setConfirmedFrom2D] = useState<boolean>(false);
   const [holdSeconds, setHoldSeconds] = useState<number>(582); // ~9m 42s
   const [loading, setLoading] = useState<boolean>(true);
   const [holdError, setHoldError] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
-  // Fetch 3D seating layout & availability from backend
+  // Fetch seating layout & availability from backend and always start in 2D selection mode
   useEffect(() => {
+    setIs2DView(true);
+    setConfirmedFrom2D(false);
+    setSelectedSeatCodes([]);
+    setHoldError(null);
+    setIsDrawerOpen(false);
+    setLoading(true);
+
     fetch(`/api/v1/shows/${show.id}/layout-and-seats`)
       .then((res) => res.json())
       .then((data) => {
@@ -68,9 +77,10 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
   };
 
   const calculateSubtotal = () => {
+    const fallbackPrice = show.pricing?.STANDARD || 190;
     return selectedSeatCodes.reduce((sum, code) => {
       const seat = seats.find((s) => s.seatCode === code);
-      return sum + (seat?.price || 28.0);
+      return sum + (seat?.price ?? fallbackPrice);
     }, 0);
   };
 
@@ -81,6 +91,17 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
   };
 
   const subtotal = calculateSubtotal();
+
+  const handleConfirm2DSeats = () => {
+    if (selectedSeatCodes.length === 0) {
+      setHoldError('Please select at least one seat in 2D before confirming.');
+      return;
+    }
+    setHoldError(null);
+    setIsDrawerOpen(false);
+    setConfirmedFrom2D(true);
+    setIs2DView(false);
+  };
 
   const handleContinue = async () => {
     if (selectedSeatCodes.length === 0) {
@@ -112,16 +133,28 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
 
   return (
     <div className="flex flex-col w-full relative h-[calc(100vh-5rem)] mt-20 overflow-hidden select-none bg-[#050505] text-[#FFFFFF]">
-      {/* Main Viewport: 3D Scene or 2D Blueprint */}
+      {/* Main Viewport: 2D Seat Plan First -> Confirmed into 3D Scene */}
       <div className="absolute inset-0 w-full h-full z-10">
         {is2DView ? (
-          <div className="w-full h-full flex items-center justify-center p-4 md:p-8 overflow-y-auto">
-            <Auditorium2D
-              seats={seats}
-              selectedSeatCodes={selectedSeatCodes}
-              onToggleSeat={toggleSeat}
-              theme="dark"
-            />
+          <div className="w-full h-full overflow-y-auto pt-20 pb-28 px-4 md:px-8">
+            <div className="max-w-[1220px] mx-auto">
+              {loading && seats.length === 0 ? (
+                <div className="w-full py-24 rounded-3xl border border-[#222222] bg-[#0B0B0B] flex flex-col items-center justify-center gap-3 text-sm text-[#A0A0A0]">
+                  <span className="w-6 h-6 rounded-full border-2 border-[#FF6500] border-t-transparent animate-spin" />
+                  <span>Loading interactive 2D seat layout...</span>
+                </div>
+              ) : (
+                <Auditorium2D
+                  seats={seats}
+                  selectedSeatCodes={selectedSeatCodes}
+                  onToggleSeat={toggleSeat}
+                  theme="dark"
+                  city={show.city}
+                  showFormat={show.screenFormat}
+                  topPrice={show.pricing?.STANDARD}
+                />
+              )}
+            </div>
           </div>
         ) : (
           <Auditorium3D
@@ -130,6 +163,7 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
             onToggleSeat={toggleSeat}
             interactive={true}
             theme="dark"
+            city={show.city}
           />
         )}
       </div>
@@ -149,7 +183,10 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold text-white">{movie.title}</span>
             <Badge variant="outline" size="sm">
-              {show.startTime}
+              {show.displayTime || show.startTime}
+            </Badge>
+            <Badge variant={is2DView ? 'brand' : 'success'} size="sm">
+              {is2DView ? 'Step 1/2 • 2D Plan' : confirmedFrom2D ? 'Step 2/2 • 3D Confirmed' : '3D Auditorium'}
             </Badge>
           </div>
         </div>
@@ -202,27 +239,87 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
             <span>{isDrawerOpen ? 'Hide' : `Seats (${selectedSeatCodes.length})`}</span>
             {!isDrawerOpen && selectedSeatCodes.length > 0 && (
               <span className="px-2 py-0.5 rounded-full bg-[#FF6500] text-white text-[10px] font-bold">
-                £{subtotal.toFixed(0)}
+                {formatCurrency(subtotal, show.city, false)}
               </span>
             )}
           </button>
         </div>
       </div>
 
-      {/* 2D / 3D SWITCHER BUTTON (Bottom Left Floating Pill) */}
-      <div className="absolute bottom-6 left-4 md:left-8 z-20 pointer-events-auto">
-        <button
-          onClick={() => setIs2DView(!is2DView)}
-          className="flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-xl text-xs font-semibold tracking-wide transition-all shadow-card-subtle border border-[#222222] bg-[#111111]/90 text-white hover:bg-[#181818] hover:border-[#FF6500]/50"
-        >
-          <span className="material-symbols-outlined text-[#FF6500] text-[18px]">
-            {is2DView ? 'view_in_ar' : 'grid_view'}
-          </span>
-          <span className="font-semibold">
-            {is2DView ? 'Switch to 3D Auditorium' : 'Switch to 2D Plan'}
-          </span>
-        </button>
-      </div>
+      {/* BOTTOM ACTION BAR: 2D Confirm Dock -> Automatically Transitions to 3D */}
+      {is2DView ? (
+        <div className="absolute bottom-4 left-4 right-4 md:left-8 md:right-8 z-20 pointer-events-auto">
+          <div className="max-w-5xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-3.5 rounded-2xl backdrop-blur-2xl border border-[#222222] bg-[#111111]/95 shadow-[0_20px_50px_rgba(0,0,0,0.92)]">
+            <div className="flex flex-col gap-0.5 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#FF6500]">
+                  Step 1 &bull; 2D Seat Plan
+                </span>
+                {selectedSeatCodes.length > 0 && (
+                  <span className="text-[11px] font-bold text-white">
+                    &bull; {formatCurrency(subtotal, show.city)}
+                  </span>
+                )}
+              </div>
+              {selectedSeatCodes.length === 0 ? (
+                <span className="text-xs text-[#A0A0A0]">
+                  Tap available seats on the 2D layout, then press Confirm to enter the 3D auditorium.
+                </span>
+              ) : (
+                <div className="flex items-center gap-1.5 text-xs text-white truncate">
+                  <span className="text-[#A0A0A0] shrink-0">
+                    Selected ({selectedSeatCodes.length}):
+                  </span>
+                  <span className="font-semibold text-[#FF6500] truncate">
+                    {selectedSeatCodes.join(', ')}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2.5 shrink-0">
+              <Button
+                onClick={handleConfirm2DSeats}
+                variant="primary"
+                size="md"
+                rightIcon={<span className="material-symbols-outlined text-[18px]">view_in_ar</span>}
+                className={selectedSeatCodes.length === 0 ? 'opacity-75' : ''}
+              >
+                {selectedSeatCodes.length > 0
+                  ? `Confirm Seats (${selectedSeatCodes.length}) • View 3D`
+                  : 'Confirm Seats'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="absolute bottom-24 xl:bottom-6 left-4 md:left-8 z-20 pointer-events-auto">
+            <button
+              onClick={() => setIs2DView(true)}
+              className="flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-xl text-xs font-semibold tracking-wide transition-all shadow-card-subtle border border-[#222222] bg-[#111111]/90 text-white hover:bg-[#181818] hover:border-[#FF6500]/50"
+            >
+              <span className="material-symbols-outlined text-[#FF6500] text-[18px]">
+                grid_view
+              </span>
+              <span className="font-semibold">Back to 2D Plan</span>
+            </button>
+          </div>
+
+          {selectedSeatCodes.length > 0 && (
+            <div className="hidden xl:block absolute bottom-6 right-8 z-20 pointer-events-auto">
+              <Button
+                onClick={handleContinue}
+                variant="primary"
+                size="md"
+                rightIcon={<span className="material-symbols-outlined text-[18px]">arrow_forward</span>}
+              >
+                Proceed to Payment ({selectedSeatCodes.length})
+              </Button>
+            </div>
+          )}
+        </>
+      )}
 
       {/* Error Message Floating Banner */}
       {holdError && (
@@ -307,7 +404,7 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
                         <span className="font-bold text-[#FF6500]">{code}</span>
                         <span className="text-[10px] text-[#707070]">{seat?.tier || 'Standard'}</span>
                         <span className="text-white/40">&bull;</span>
-                        <span className="text-xs font-semibold">£{seat?.price.toFixed(2) || '28.00'}</span>
+                        <span className="text-xs font-semibold">{formatCurrency(seat?.price ?? (show.pricing?.STANDARD || 190), show.city)}</span>
                         <button
                           onClick={() => toggleSeat(code)}
                           className="text-[#707070] hover:text-red-400 ml-1 text-xs"
@@ -325,7 +422,7 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
             <div className="flex flex-col gap-2 pt-4 border-t border-[#222222] text-xs">
               <div className="flex justify-between text-[#A0A0A0]">
                 <span>Tickets ({selectedSeatCodes.length})</span>
-                <span className="text-white font-medium">£{subtotal.toFixed(2)}</span>
+                <span className="text-white font-medium">{formatCurrency(subtotal, show.city)}</span>
               </div>
               <div className="flex justify-between text-[#A0A0A0]">
                 <span>Convenience Fee</span>
@@ -333,26 +430,38 @@ export const SeatSelectionPage: React.FC<SeatSelectionPageProps> = ({
               </div>
               <div className="flex justify-between text-[#A0A0A0]">
                 <span>Estimated VAT (18%)</span>
-                <span className="text-white font-medium">£{(subtotal * 0.18).toFixed(2)}</span>
+                <span className="text-white font-medium">{formatCurrency(subtotal * 0.18, show.city)}</span>
               </div>
               <div className="flex justify-between pt-2 border-t border-[#222222] text-sm font-bold text-white">
                 <span>Total Amount</span>
-                <span className="text-[#FF6500] text-base">£{(subtotal * 1.18).toFixed(2)}</span>
+                <span className="text-[#FF6500] text-base">{formatCurrency(subtotal * 1.18, show.city)}</span>
               </div>
             </div>
           </div>
 
           {/* Drawer Bottom CTA */}
           <div className="pt-6 border-t border-[#222222]">
-            <Button
-              onClick={handleContinue}
-              disabled={selectedSeatCodes.length === 0}
-              variant="primary"
-              size="lg"
-              className="w-full"
-            >
-              Proceed to Payment ({selectedSeatCodes.length} Seats) &rarr;
-            </Button>
+            {is2DView ? (
+              <Button
+                onClick={handleConfirm2DSeats}
+                variant="primary"
+                size="lg"
+                className="w-full"
+                rightIcon={<span className="material-symbols-outlined text-[18px]">view_in_ar</span>}
+              >
+                Confirm Seats &amp; View in 3D ({selectedSeatCodes.length})
+              </Button>
+            ) : (
+              <Button
+                onClick={handleContinue}
+                disabled={selectedSeatCodes.length === 0}
+                variant="primary"
+                size="lg"
+                className="w-full"
+              >
+                Proceed to Payment ({selectedSeatCodes.length} Seats) &rarr;
+              </Button>
+            )}
           </div>
         </div>
       </aside>

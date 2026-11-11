@@ -4,6 +4,7 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Badge } from '../components/ui/Badge';
 import { useToast } from '../components/ui/Toast';
+import { formatCurrency } from '../utils/currency';
 
 interface CheckoutPageProps {
   show: Show;
@@ -253,7 +254,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                   <h4 className="text-sm font-bold text-white line-clamp-1">{movie.title}</h4>
                   <span className="text-xs text-[#A0A0A0]">{show.branchName}</span>
                   <span className="text-xs text-[#FF6500] font-medium">{show.screenName}</span>
-                  <span className="text-[11px] text-[#707070]">{show.startTime} &bull; {show.date}</span>
+                  <span className="text-[11px] text-[#707070]">{show.displayTime || show.startTime} &bull; {show.date}</span>
                 </div>
               </div>
 
@@ -278,7 +279,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
               <div className="flex flex-col gap-2.5 pt-4 border-t border-[#222222] text-xs">
                 <div className="flex justify-between text-[#A0A0A0]">
                   <span>Ticket Subtotal</span>
-                  <span className="text-white font-medium">£{subtotal.toFixed(2)}</span>
+                  <span className="text-white font-medium">{formatCurrency(subtotal, show.city)}</span>
                 </div>
                 <div className="flex justify-between text-[#A0A0A0]">
                   <span>Online Convenience Fee</span>
@@ -286,11 +287,11 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                 </div>
                 <div className="flex justify-between text-[#A0A0A0]">
                   <span>VAT &amp; Entertainment Levy (18%)</span>
-                  <span className="text-white font-medium">£{taxAmount.toFixed(2)}</span>
+                  <span className="text-white font-medium">{formatCurrency(taxAmount, show.city)}</span>
                 </div>
                 <div className="flex justify-between pt-3 border-t border-[#222222] text-sm font-bold text-white">
                   <span>Grand Total</span>
-                  <span className="text-xl text-[#FF6500]">£{totalAmount.toFixed(2)}</span>
+                  <span className="text-xl text-[#FF6500]">{formatCurrency(totalAmount, show.city)}</span>
                 </div>
               </div>
 
@@ -315,7 +316,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                 size="lg"
                 className="w-full mt-2"
               >
-                Authorize &amp; Pay £{totalAmount.toFixed(2)}
+                Authorize &amp; Pay {formatCurrency(totalAmount, show.city)}
               </Button>
             </div>
           </div>

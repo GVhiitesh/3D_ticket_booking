@@ -24,8 +24,8 @@ export function App() {
 
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [selectedShow, setSelectedShow] = useState<Show | null>(null);
-  const [selectedSeatCodes, setSelectedSeatCodes] = useState<string[]>(['E-9', 'E-10']);
-  const [checkoutSubtotal, setCheckoutSubtotal] = useState<number>(56.0);
+  const [selectedSeatCodes, setSelectedSeatCodes] = useState<string[]>([]);
+  const [checkoutSubtotal, setCheckoutSubtotal] = useState<number>(0);
   const [confirmedBooking, setConfirmedBooking] = useState<Booking | null>(null);
 
   const [currentUser, setCurrentUser] = useState<{ name: string; email: string; phone?: string } | null>({
@@ -34,7 +34,7 @@ export function App() {
     phone: '+44 7700 900123',
   });
 
-  const [selectedCity, setSelectedCity] = useState<string>('London');
+  const [selectedCity, setSelectedCity] = useState<string>('Trichy');
   const [authModalOpen, setAuthModalOpen] = useState<boolean>(false);
   const [trailerModalUrl, setTrailerModalUrl] = useState<string | null>(null);
   const [searchModalOpen, setSearchModalOpen] = useState<boolean>(false);
@@ -78,6 +78,8 @@ export function App() {
 
   const handleBookShow = (show: Show) => {
     setSelectedShow(show);
+    setSelectedSeatCodes([]);
+    setCheckoutSubtotal(0);
     const movie = movies.find((m) => m.id === show.movieId) || movies[0];
     setSelectedMovie(movie);
     setCurrentTab('seat-selection');
@@ -150,6 +152,7 @@ export function App() {
             <CinemasPage
               branches={branches}
               shows={shows}
+              selectedCity={selectedCity}
               onSelectBranch={() => setCurrentTab('movies')}
               onBookShow={handleBookShow}
             />
@@ -215,36 +218,61 @@ export function App() {
           }}
         />
 
-        {/* Trailer Player Modal */}
-        {trailerModalUrl && (
-          <Modal
-            isOpen={Boolean(trailerModalUrl)}
-            onClose={() => setTrailerModalUrl(null)}
-            title="Theatrical Teaser"
-            subtitle="4K Dual Laser Presentation"
-            maxWidth="4xl"
-          >
-            <div className="w-full aspect-video bg-[#050505] rounded-2xl overflow-hidden border border-[#222222] flex flex-col items-center justify-center p-8 text-center gap-4">
-              <span className="material-symbols-outlined text-[#FF6500] text-[64px] animate-pulse">
-                play_circle
-              </span>
-              <h3 className="text-2xl font-bold text-white uppercase tracking-wider">
-                CHRONOS: BEYOND TIME — 4K Official Trailer
-              </h3>
-              <p className="text-xs text-[#A0A0A0] max-w-md">
-                Experience the official IMAX 70mm theatrical presentation preview in Dolby Atmos 64-channel spatial sound.
-              </p>
-              <Button
-                onClick={() => setTrailerModalUrl(null)}
-                variant="primary"
-                size="md"
-                className="mt-2"
-              >
-                Close Trailer
-              </Button>
-            </div>
-          </Modal>
-        )}
+        {/* Trailer / Movie Listing Preview Modal */}
+        {trailerModalUrl && (() => {
+          const previewMovie =
+            movies.find((m) => m.trailerUrl === trailerModalUrl) || selectedMovie || movies[0];
+          return (
+            <Modal
+              isOpen={Boolean(trailerModalUrl)}
+              onClose={() => setTrailerModalUrl(null)}
+              title={previewMovie ? `${previewMovie.title} — Theatrical Preview` : 'Theatrical Teaser'}
+              subtitle={previewMovie ? `${previewMovie.language} • ${previewMovie.certification} • ${previewMovie.genre}` : '4K Dual Laser Presentation'}
+              maxWidth="4xl"
+            >
+              <div className="relative w-full aspect-video bg-[#050505] rounded-2xl overflow-hidden border border-[#222222] flex flex-col items-center justify-center p-8 text-center gap-4">
+                {previewMovie?.backdropUrl && (
+                  <img
+                    src={previewMovie.backdropUrl}
+                    alt={previewMovie.title}
+                    className="absolute inset-0 w-full h-full object-cover opacity-25"
+                  />
+                )}
+                <div className="relative z-10 flex flex-col items-center gap-3 max-w-lg">
+                  <span className="material-symbols-outlined text-[#FF6500] text-[64px] animate-pulse">
+                    play_circle
+                  </span>
+                  <h3 className="text-2xl font-bold text-white uppercase tracking-wider">
+                    {previewMovie?.title || 'Featured Film'} — Theatrical Preview
+                  </h3>
+                  <p className="text-xs text-[#A0A0A0] leading-relaxed">
+                    {previewMovie?.description ||
+                      'Experience this theatrical presentation in 4K Laser projection and Dolby Atmos sound.'}
+                  </p>
+                  <div className="flex flex-wrap items-center justify-center gap-3 mt-2">
+                    {previewMovie?.bookMyShowUrl && (
+                      <a
+                        href={previewMovie.bookMyShowUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 rounded-xl bg-[#181818] hover:bg-[#222222] border border-[#FF6500]/40 text-xs font-semibold text-[#FF6500] transition-colors"
+                      >
+                        View on BookMyShow &nearr;
+                      </a>
+                    )}
+                    <Button
+                      onClick={() => setTrailerModalUrl(null)}
+                      variant="primary"
+                      size="md"
+                    >
+                      Close Preview
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Modal>
+          );
+        })()}
 
         {/* Quick Search Modal */}
         {searchModalOpen && (

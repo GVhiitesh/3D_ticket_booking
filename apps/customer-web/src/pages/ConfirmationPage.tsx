@@ -2,6 +2,7 @@ import React from 'react';
 import { Booking } from '../types';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
+import { formatCurrency } from '../utils/currency';
 
 interface ConfirmationPageProps {
   booking: Booking;
@@ -90,7 +91,7 @@ export const ConfirmationPage: React.FC<ConfirmationPageProps> = ({
             {/* Bottom Disclaimer */}
             <div className="text-[11px] text-[#707070] pt-4 border-t border-[#222222] flex items-center justify-between">
               <span>Auditorium turnstiles open 20m before showtime</span>
-              <span className="text-white font-bold">Paid: £{booking.totalAmount.toFixed(2)}</span>
+              <span className="text-white font-bold">Paid: {formatCurrency(booking.totalAmount, booking.city)}</span>
             </div>
           </div>
 

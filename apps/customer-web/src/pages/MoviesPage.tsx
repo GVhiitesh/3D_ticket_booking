@@ -13,14 +13,16 @@ export const MoviesPage: React.FC<MoviesPageProps> = ({ movies, onSelectMovie })
   const [selectedGenre, setSelectedGenre] = useState('All');
   const [selectedFormat, setSelectedFormat] = useState('All');
 
-  const genres = ['All', 'Sci-Fi / Thriller', 'Fantasy / Space', 'Noir Thriller'];
-  const formats = ['All', 'IMAX 70mm', 'Dolby Cinema', '70mm Panavision'];
+  const genres = ['All', 'Action', 'Thriller', 'Drama', 'Mythological', 'Comedy', 'Sports', 'Fantasy'];
+  const formats = ['All', '3D', '2D', 'Dolby', '4DX'];
 
   const filtered = movies.filter((m) => {
     const matchesSearch =
       m.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       m.director.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      m.genre.toLowerCase().includes(searchQuery.toLowerCase());
+      m.genre.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      m.language.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      m.cast.some((c) => c.toLowerCase().includes(searchQuery.toLowerCase()));
 
     const matchesGenre = selectedGenre === 'All' || m.genre.includes(selectedGenre);
     const matchesFormat =

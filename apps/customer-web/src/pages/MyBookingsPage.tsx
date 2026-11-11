@@ -4,6 +4,7 @@ import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { Modal } from '../components/ui/Modal';
 import { EmptyState } from '../components/ui/EmptyState';
+import { formatCurrency } from '../utils/currency';
 
 interface MyBookingsPageProps {
   onBookMore: () => void;
@@ -135,7 +136,7 @@ export const MyBookingsPage: React.FC<MyBookingsPageProps> = ({ onBookMore, curr
                       ))}
                     </div>
                     <span className="text-xs font-bold text-white mt-1">
-                      Total: £{booking.totalAmount.toFixed(2)}
+                      Total: {formatCurrency(booking.totalAmount, booking.city)}
                     </span>
                   </div>
 

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { AVAILABLE_CITIES } from '../utils/currency';
 
 interface HeaderProps {
   currentTab: string;
@@ -94,7 +95,7 @@ export const Header: React.FC<HeaderProps> = ({
 
             {cityDropdownOpen && (
               <div className="absolute right-0 top-full mt-2 w-48 rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.9)] p-1.5 z-50 border border-[#222222] bg-[#111111] text-white animate-fade-in">
-                {['London', 'Bengaluru', 'Mumbai', 'New York'].map((city) => (
+                {AVAILABLE_CITIES.map((city) => (
                   <button
                     key={city}
                     onClick={() => {

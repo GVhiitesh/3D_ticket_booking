@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { SeatNode } from '../types';
+import { formatCurrency } from '../utils/currency';
 
 interface Auditorium3DProps {
   seats?: SeatNode[];
@@ -8,6 +9,7 @@ interface Auditorium3DProps {
   onToggleSeat: (seatCode: string) => void;
   interactive?: boolean;
   theme?: 'light' | 'dark';
+  city?: string;
 }
 
 interface FanRowConfig {
@@ -234,22 +236,8 @@ const FAN_ROW_CONFIGS: FanRowConfig[] = [
 
 const Z_CENTER = -26.0;
 
-const DEFAULT_PRE_BOOKED = new Set([
-  'A-23', 'D-22', 'E-25',
-  'B-10', 'B-11', 'B-12', 'B-13', 'B-14', 'B-15', 'B-16',
-  'C-8', 'C-9', 'C-10', 'C-11', 'C-12', 'C-13', 'C-14', 'C-15', 'C-16',
-  'D-8', 'D-9', 'D-10', 'D-11', 'D-12', 'D-13', 'D-14', 'D-15', 'D-16', 'D-17', 'D-18',
-  'E-8', 'E-9', 'E-10', 'E-11', 'E-12', 'E-13', 'E-14', 'E-15', 'E-16',
-  'F-8', 'F-9', 'F-10', 'F-11', 'F-12', 'F-13', 'F-14', 'F-15', 'F-16', 'F-17',
-  'G-8', 'G-9', 'G-10', 'G-11', 'G-12', 'G-13', 'G-14', 'G-15', 'G-16',
-  'H-8', 'H-9', 'H-10', 'H-11', 'H-12', 'H-13', 'H-14', 'H-15',
-  'J-8', 'J-9', 'J-10', 'J-11', 'J-12', 'J-13', 'J-14',
-  'K-8', 'K-9', 'K-10', 'K-11', 'K-12', 'K-13',
-  'L-7', 'L-8', 'L-9', 'L-10', 'L-11', 'L-12',
-  'M-7', 'M-8', 'M-9', 'M-10', 'M-11', 'M-12',
-  'N-6', 'N-7', 'N-8', 'N-9', 'N-10',
-  'P-6', 'P-7', 'P-8', 'P-9', 'P-10',
-]);
+// All seats start fully available for customer reservation
+const DEFAULT_PRE_BOOKED = new Set<string>();
 
 function generateFallbackSeats(): SeatNode[] {
   const generated: SeatNode[] = [];
@@ -446,6 +434,7 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
   onToggleSeat,
   interactive = true,
   theme = 'light',
+  city,
 }) => {
   const isLight = theme === 'light';
   const containerRef = useRef<HTMLDivElement>(null);
@@ -1447,7 +1436,7 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
             </span>
             <span className="w-px h-4 bg-white/20" />
             <span className="text-[#A0A0A0] font-medium">
-              {sightlineSeat.tier} • £{sightlineSeat.price.toFixed(2)}
+              {sightlineSeat.tier} • {formatCurrency(sightlineSeat.price, city)}
             </span>
             <span className="w-px h-4 bg-white/20" />
             <button
@@ -1478,7 +1467,7 @@ export const Auditorium3D: React.FC<Auditorium3DProps> = ({
             </span>
           </div>
           <div className="flex items-center justify-between gap-3 text-[11px] text-[#A0A0A0]">
-            <span>Price: £{hoveredSeat.price.toFixed(2)}</span>
+            <span>Price: {formatCurrency(hoveredSeat.price, city)}</span>
             <span
               className={
                 hoveredSeat.status === 'SELECTED'

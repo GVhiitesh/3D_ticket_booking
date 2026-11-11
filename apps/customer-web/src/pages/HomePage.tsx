@@ -3,6 +3,7 @@ import { Movie, Show, Branch } from '../types';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { MovieCard } from '../components/ui/MovieCard';
+import { AVAILABLE_CITIES, formatCurrency } from '../utils/currency';
 
 interface HomePageProps {
   movies: Movie[];
@@ -17,12 +18,20 @@ interface HomePageProps {
 
 const fallbackBranches: Branch[] = [
   {
-    id: 'branch-west-end',
-    name: 'CINEVA IMAX West End',
-    city: 'London',
-    address: '1 Leicester Square, West End, London WC2H 7NA',
-    screensCount: 4,
-    formats: ['70MM IMAX Laser', 'Dolby Cinema', 'Laser Grand'],
+    id: 'branch-trichy-la-maris',
+    name: 'LA CINEMA: MARIS, TRICHY',
+    city: 'Trichy',
+    address: 'Fort Station Road, Tiruchirappalli, Tamil Nadu 620002',
+    screensCount: 2,
+    formats: ['RGB Laser 4K Atmos', '4K Laser Dolby Atmos', '3D'],
+  },
+  {
+    id: 'branch-trichy-mariyam',
+    name: 'Mariyam Cinemas A/C 4K: Trichy',
+    city: 'Trichy',
+    address: 'Trichy Main Road, Samayapuram, Tiruchirappalli, Tamil Nadu 621112',
+    screensCount: 2,
+    formats: ['RGB 4K Laser Atmos', 'Dolby 7.1'],
   },
   {
     id: 'branch-bengaluru',
@@ -41,6 +50,14 @@ const fallbackBranches: Branch[] = [
     formats: ['70MM IMAX', 'Dolby Atmos', 'VIP Recliner Lounge'],
   },
   {
+    id: 'branch-west-end',
+    name: 'CINEVA IMAX West End',
+    city: 'London',
+    address: '1 Leicester Square, West End, London WC2H 7NA',
+    screensCount: 4,
+    formats: ['70MM IMAX Laser', 'Dolby Cinema', 'Laser Grand'],
+  },
+  {
     id: 'branch-new-york',
     name: 'CINEVA Lincoln Square',
     city: 'New York',
@@ -50,24 +67,48 @@ const fallbackBranches: Branch[] = [
   },
 ];
 
-const availableCities = ['London', 'Bengaluru', 'Mumbai', 'New York'];
+const fallbackMovie: Movie = {
+  id: 'movie-ramayana',
+  title: 'Ramayana',
+  slug: 'ramayana',
+  director: 'Nitesh Tiwari',
+  musicDirector: 'A. R. Rahman & Hans Zimmer',
+  producer: 'Namit Malhotra, Yash',
+  cast: ['Ranbir Kapoor (Rama)', 'Yash (Ravana)', 'Sai Pallavi (Sita)', 'Ravie Dubey (Lakshman)', 'Sunny Deol (Hanuman)'],
+  genre: 'Action / Adventure / Drama / Mythological',
+  language: 'Hindi, Tamil',
+  durationMins: 195,
+  certification: 'U',
+  imdbRating: 9.3,
+  ratingLabel: '9.3/10 (254K+ Votes)',
+  releaseDate: '2026-11-05',
+  status: 'NOW_SHOWING',
+  badges: ['3D', 'DOLBY ATMOS', '4DX 3D', 'EPIQ 3D'],
+  description:
+    'The immortal story of Rama and Ravana defined a culture and moved generations. It now arrives as a cinematic landmark of our time. Ramayana is a timeless saga reborn through the lens of modern Indian cinema.',
+  posterUrl:
+    'https://assets-in.bmscdn.com/iedb/movies/images/mobile/thumbnail/xlarge/ramayana-et00451914-1793772172.jpg',
+  backdropUrl:
+    'https://assets-in.bmscdn.com/iedb/movies/images/mobile/listing/xxlarge/ramayana-et00451914-1793772172.jpg',
+  trailerUrl: 'https://in.bookmyshow.com/movies/trichy/ramayana/ET00451914',
+};
 
 export const HomePage: React.FC<HomePageProps> = ({
   movies,
   shows,
   branches = fallbackBranches,
-  selectedCity = 'London',
+  selectedCity = 'Trichy',
   onSelectCity,
   onSelectMovie,
   onBookShow,
   onOpenTrailer,
 }) => {
   const [formatFilter, setFormatFilter] = useState<string>('All Formats');
-  
+
   // Interactive Selector States
   const [activeCity, setActiveCity] = useState<string>(selectedCity);
-  const [activeBranchId, setActiveBranchId] = useState<string>('branch-west-end');
-  const [activeMovieId, setActiveMovieId] = useState<string>('movie-chronos');
+  const [activeBranchId, setActiveBranchId] = useState<string>('branch-trichy-la-maris');
+  const [activeMovieId, setActiveMovieId] = useState<string>('movie-ramayana');
 
   // Dropdown States
   const [cityOpen, setCityOpen] = useState(false);
@@ -78,10 +119,9 @@ export const HomePage: React.FC<HomePageProps> = ({
   const cinemaDropdownRef = useRef<HTMLDivElement>(null);
   const movieDropdownRef = useRef<HTMLDivElement>(null);
 
-  // All branches available
   const allBranches = branches && branches.length > 0 ? branches : fallbackBranches;
 
-  // Sync when selectedCity prop changes from universal Header
+  // Keep activeCity in sync when header city changes
   useEffect(() => {
     if (selectedCity && selectedCity !== activeCity) {
       setActiveCity(selectedCity);
@@ -93,6 +133,13 @@ export const HomePage: React.FC<HomePageProps> = ({
       }
     }
   }, [selectedCity, allBranches]);
+
+  // Ensure activeMovieId matches loaded movies
+  useEffect(() => {
+    if (movies.length > 0 && !movies.some((m) => m.id === activeMovieId)) {
+      setActiveMovieId(movies[0].id);
+    }
+  }, [movies, activeMovieId]);
 
   // Handle outside click for dropdowns
   useEffect(() => {
@@ -117,52 +164,36 @@ export const HomePage: React.FC<HomePageProps> = ({
     (b) => b.city.toLowerCase() === activeCity.toLowerCase()
   );
 
-  // Resolve currently active branch
   const activeBranch =
     cityBranches.find((b) => b.id === activeBranchId) ||
     cityBranches[0] ||
     allBranches[0];
 
-  // Resolve currently active movie
   const activeMovie =
-    movies.find((m) => m.id === activeMovieId) || movies[0] || {
-      id: 'movie-chronos',
-      title: 'CHRONOS: BEYOND TIME',
-      slug: 'chronos-beyond-time',
-      director: 'Elias Thorne',
-      musicDirector: 'Hans Zimmer',
-      cast: ['David Oyelowo', 'Rebecca Ferguson', 'Cillian Murphy'],
-      genre: 'Sci-Fi / Thriller',
-      language: 'English',
-      durationMins: 168,
-      certification: '12A',
-      imdbRating: 9.8,
-      releaseDate: '2026-10-24',
-      status: 'NOW_SHOWING',
-      badges: ['IMAX 70MM EXCLUSIVE', 'DOLBY ATMOS', '1.43:1 EXPANDED ASPECT RATIO'],
-      description:
-        "A team of deep-space cartographers enter an uncharted gravitational anomaly, where time dilates and the fabric of reality reveals humanity's origin.",
-      posterUrl:
-        'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1000&auto=format&fit=crop',
-      backdropUrl:
-        'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=1600&auto=format&fit=crop',
-      trailerUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-    };
+    movies.find((m) => m.id === activeMovieId) || movies[0] || fallbackMovie;
 
-  // Find matching shows for current (Branch + Movie)
-  const matchingShows = shows.filter((s) => {
-    const branchMatches = s.branchId === activeBranch?.id;
-    const movieMatches = s.movieId === activeMovie?.id;
-    return branchMatches && movieMatches;
-  });
+  // Matching shows for (activeBranch + activeMovie)
+  const matchingShows = shows.filter(
+    (s) => s.branchId === activeBranch?.id && s.movieId === activeMovie?.id
+  );
 
-  // Handle City Change
+  // Alternative shows in activeCity if selected cinema isn't screening activeMovie
+  const cityMovieAltShows = shows.filter(
+    (s) =>
+      s.city.toLowerCase() === activeCity.toLowerCase() &&
+      s.movieId === activeMovie?.id &&
+      s.branchId !== activeBranch?.id
+  );
+
+  const altBranchesForMovie = Array.from(
+    new Map(cityMovieAltShows.map((s) => [s.branchId, s])).values()
+  );
+
   const handleCitySelect = (city: string) => {
     setActiveCity(city);
     setCityOpen(false);
     if (onSelectCity) onSelectCity(city);
 
-    // Pick first branch of newly selected city
     const matchedBranches = allBranches.filter(
       (b) => b.city.toLowerCase() === city.toLowerCase()
     );
@@ -171,39 +202,40 @@ export const HomePage: React.FC<HomePageProps> = ({
     }
   };
 
-  // Handle Cinema Change
   const handleBranchSelect = (branchId: string) => {
     setActiveBranchId(branchId);
     setCinemaOpen(false);
   };
 
-  // Handle Movie Change
   const handleMovieSelect = (movieId: string) => {
     setActiveMovieId(movieId);
     setMovieOpen(false);
   };
 
-  const premiereMovie: Movie = activeMovie || movies[0];
+  const formatRuntime = (mins: number) => {
+    const hrs = Math.floor(mins / 60);
+    const rem = mins % 60;
+    return hrs > 0 ? `${hrs}h ${rem}m` : `${rem}m`;
+  };
+
+  const premiereMovie: Movie = activeMovie || movies[0] || fallbackMovie;
 
   const filteredMovies = movies.filter((m) => {
     if (formatFilter === 'All Formats') return true;
-    if (formatFilter === 'IMAX 70mm') return m.badges?.some((b) => b.includes('IMAX'));
-    if (formatFilter === 'Dolby Cinema') return m.badges?.some((b) => b.includes('DOLBY'));
-    return true;
+    return m.badges?.some((b) => b.toUpperCase().includes(formatFilter.toUpperCase()));
   });
 
   return (
     <div className="flex flex-col w-full bg-[#050505] text-[#FFFFFF] min-h-screen">
       {/* SECTION 1: CINEMATIC HERO PREMIERE */}
       <section className="relative w-full min-h-[80vh] flex flex-col justify-end px-5 md:px-12 pb-16 pt-24 overflow-hidden border-b border-[#222222]">
-        {/* Backdrop Visual Layer */}
         <div className="absolute inset-0 z-0">
           <img
             alt={premiereMovie.title}
             src={premiereMovie.backdropUrl || premiereMovie.posterUrl}
             onError={(e) => {
               e.currentTarget.src =
-                'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=1600&auto=format&fit=crop';
+                'https://assets-in.bmscdn.com/iedb/movies/images/mobile/listing/xxlarge/ramayana-et00451914-1793772172.jpg';
             }}
             className="w-full h-full object-cover object-center scale-[1.01] transform transition-transform duration-1000"
           />
@@ -211,21 +243,24 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/65 to-transparent" />
         </div>
 
-        {/* Hero Content Container */}
         <div className="relative z-10 max-w-7xl mx-auto w-full flex flex-col gap-5">
           {/* Format Badges */}
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="brand" pulse>
-              FEATURED ENGAGEMENT
+              NOW SHOWING IN {activeCity.toUpperCase()}
             </Badge>
-            <Badge variant="neutral">DOLBY ATMOS 64CH</Badge>
-            <Badge variant="outline">DIR. {premiereMovie.director?.toUpperCase() || 'ELIAS THORNE'}</Badge>
+            {premiereMovie.badges?.slice(0, 2).map((badge) => (
+              <Badge key={badge} variant="neutral">
+                {badge}
+              </Badge>
+            ))}
+            <Badge variant="outline">DIR. {premiereMovie.director?.toUpperCase()}</Badge>
           </div>
 
           {/* Title & Headline */}
           <div className="flex flex-col gap-1">
             <span className="text-xs font-semibold text-[#FF6500] uppercase tracking-widest">
-              Now Exhibiting &bull; {activeCity.toUpperCase()}
+              {premiereMovie.language} &bull; Theatrical Engagement
             </span>
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight uppercase text-white max-w-4xl">
               {premiereMovie.title}
@@ -236,10 +271,10 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-[#A0A0A0]">
             <span className="text-white font-medium">{premiereMovie.genre}</span>
             <span>&bull;</span>
-            <span>{premiereMovie.durationMins || 168} mins</span>
+            <span>{formatRuntime(premiereMovie.durationMins || 165)}</span>
             <span>&bull;</span>
             <span className="px-2 py-0.5 rounded bg-[#181818] border border-[#222222] text-white font-semibold">
-              {premiereMovie.certification || '12A'}
+              {premiereMovie.certification || 'UA16+'}
             </span>
             <span>&bull;</span>
             <span className="inline-flex items-center gap-1 text-white font-semibold">
@@ -249,7 +284,9 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 star
               </span>
-              <span>{premiereMovie.imdbRating} / 10 IMDb Critic Score</span>
+              <span>
+                {premiereMovie.ratingLabel || `${premiereMovie.imdbRating} / 10 Rating`}
+              </span>
             </span>
           </div>
 
@@ -266,7 +303,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               size="lg"
               leftIcon={<span className="material-symbols-outlined text-[20px]">confirmation_number</span>}
             >
-              Book Tickets
+              Book Tickets &amp; Details
             </Button>
             <Button
               onClick={() => onOpenTrailer(premiereMovie.trailerUrl)}
@@ -274,13 +311,13 @@ export const HomePage: React.FC<HomePageProps> = ({
               size="lg"
               leftIcon={<span className="material-symbols-outlined text-[20px]">play_arrow</span>}
             >
-              Watch 4K Trailer
+              Movie Preview
             </Button>
           </div>
         </div>
       </section>
 
-      {/* SECTION 2: INTERACTIVE THEATER, CITY & MOVIE SELECTOR CONSOLE */}
+      {/* SECTION 2: INTERACTIVE CITY, THEATER & MOVIE SELECTOR CONSOLE */}
       <section className="w-full py-14 px-5 md:px-12 border-b border-[#222222] bg-[#0A0A0A]">
         <div className="max-w-7xl mx-auto flex flex-col gap-8">
           {/* Header */}
@@ -289,19 +326,19 @@ export const HomePage: React.FC<HomePageProps> = ({
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#FF6500] animate-pulse" />
                 <span className="text-xs font-semibold text-[#FF6500] uppercase tracking-wider">
-                  Fast Booking Console
+                  Fast Booking Console &bull; {activeCity}
                 </span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
                 Find Screenings &amp; Reserve Seats
               </h2>
               <p className="text-sm text-[#A0A0A0]">
-                Select your city, choose your premier cinema auditorium, and pick or change your film to view live sessions.
+                Choose your city, select any cinema auditorium, and pick or change your movie to browse live BookMyShow timings.
               </p>
             </div>
             <div className="hidden lg:flex items-center gap-2 text-xs text-[#707070]">
               <span className="material-symbols-outlined text-[#FF6500] text-[18px]">bolt</span>
-              <span>Instant 3D Seat View &bull; 10-Min Reserved Hold</span>
+              <span>All Seats Open for Booking &bull; Instant 3D Seat View</span>
             </div>
           </div>
 
@@ -330,17 +367,16 @@ export const HomePage: React.FC<HomePageProps> = ({
                 </div>
                 <div className="text-lg font-bold text-white tracking-tight">{activeCity}</div>
                 <div className="text-xs text-[#707070] mt-1">
-                  {cityBranches.length} {cityBranches.length === 1 ? 'Cinema' : 'Cinemas'} available
+                  {cityBranches.length} {cityBranches.length === 1 ? 'Cinema' : 'Cinemas'} listed
                 </div>
               </div>
 
-              {/* City Dropdown Menu */}
               {cityOpen && (
                 <div className="absolute left-0 right-0 top-full mt-2 rounded-2xl bg-[#111111] border border-[#222222] shadow-[0_20px_50px_rgba(0,0,0,0.85)] p-2 z-30 animate-fade-in">
                   <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#707070]">
-                    Select Metropole
+                    Select City
                   </div>
-                  {availableCities.map((city) => (
+                  {AVAILABLE_CITIES.map((city) => (
                     <button
                       key={city}
                       onClick={() => handleCitySelect(city)}
@@ -378,55 +414,67 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#FF6500]">
                     <span className="material-symbols-outlined text-[18px]">theaters</span>
-                    <span>Step 2 &bull; Cinema</span>
+                    <span>Step 2 &bull; Theatre</span>
                   </div>
                   <span className="material-symbols-outlined text-[#707070] text-[18px]">
                     {cinemaOpen ? 'expand_less' : 'expand_more'}
                   </span>
                 </div>
                 <div className="text-lg font-bold text-white tracking-tight truncate">
-                  {activeBranch?.name || 'Select Cinema'}
+                  {activeBranch?.name || 'Select Theatre'}
                 </div>
                 <div className="text-xs text-[#707070] mt-1 truncate">
                   {activeBranch?.address || `${activeCity} Venue`}
                 </div>
               </div>
 
-              {/* Cinema Dropdown Menu */}
               {cinemaOpen && (
-                <div className="absolute left-0 right-0 top-full mt-2 rounded-2xl bg-[#111111] border border-[#222222] shadow-[0_20px_50px_rgba(0,0,0,0.85)] p-2 z-30 animate-fade-in max-h-72 overflow-y-auto">
+                <div className="absolute left-0 right-0 top-full mt-2 rounded-2xl bg-[#111111] border border-[#222222] shadow-[0_20px_50px_rgba(0,0,0,0.85)] p-2 z-30 animate-fade-in max-h-80 overflow-y-auto">
                   <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#707070]">
-                    Cinemas in {activeCity}
+                    Theatres in {activeCity} ({cityBranches.length})
                   </div>
-                  {cityBranches.map((branch) => (
-                    <button
-                      key={branch.id}
-                      onClick={() => handleBranchSelect(branch.id)}
-                      className={`w-full text-left p-3 rounded-xl text-xs transition-all flex flex-col gap-1 mb-1 ${
-                        activeBranch?.id === branch.id
-                          ? 'bg-[#181818] text-[#FF6500] font-semibold border border-[#FF6500]/30'
-                          : 'text-[#A0A0A0] hover:bg-[#181818] hover:text-white'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold text-white">{branch.name}</span>
-                        {activeBranch?.id === branch.id && (
-                          <span className="material-symbols-outlined text-[16px] text-[#FF6500]">check</span>
-                        )}
-                      </div>
-                      <span className="text-[11px] text-[#707070] truncate">{branch.address}</span>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-[#111111] border border-[#222222] text-[#A0A0A0]">
-                          {branch.screensCount} Auditoriums
-                        </span>
-                        {branch.formats && branch.formats[0] && (
-                          <span className="text-[10px] px-2 py-0.5 rounded bg-[#FF6500]/10 text-[#FF6500] border border-[#FF6500]/20 font-medium">
-                            {branch.formats[0]}
-                          </span>
-                        )}
-                      </div>
-                    </button>
-                  ))}
+                  {cityBranches.map((branch) => {
+                    const branchShowsCount = shows.filter((s) => s.branchId === branch.id).length;
+                    const hasSelectedMovie = shows.some(
+                      (s) => s.branchId === branch.id && s.movieId === activeMovie.id
+                    );
+                    return (
+                      <button
+                        key={branch.id}
+                        onClick={() => handleBranchSelect(branch.id)}
+                        className={`w-full text-left p-3 rounded-xl text-xs transition-all flex flex-col gap-1 mb-1 ${
+                          activeBranch?.id === branch.id
+                            ? 'bg-[#181818] text-[#FF6500] font-semibold border border-[#FF6500]/30'
+                            : 'text-[#A0A0A0] hover:bg-[#181818] hover:text-white'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-semibold text-white truncate">{branch.name}</span>
+                          {activeBranch?.id === branch.id && (
+                            <span className="material-symbols-outlined text-[16px] text-[#FF6500] shrink-0">check</span>
+                          )}
+                        </div>
+                        <span className="text-[11px] text-[#707070] truncate">{branch.address}</span>
+                        <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                          {branch.formats?.[0] && (
+                            <span className="text-[10px] px-2 py-0.5 rounded bg-[#FF6500]/10 text-[#FF6500] border border-[#FF6500]/20 font-medium">
+                              {branch.formats[0]}
+                            </span>
+                          )}
+                          {branchShowsCount > 0 && (
+                            <span className="text-[10px] px-2 py-0.5 rounded bg-[#111111] border border-[#222222] text-[#A0A0A0]">
+                              {branchShowsCount} {branchShowsCount === 1 ? 'Show' : 'Shows'}
+                            </span>
+                          )}
+                          {hasSelectedMovie && (
+                            <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-medium">
+                              Playing {activeMovie.title}
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -455,21 +503,20 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <div className="text-lg font-bold text-white tracking-tight truncate">
                   {activeMovie?.title || 'Select Movie'}
                 </div>
-                <div className="text-xs text-[#707070] mt-1 flex items-center gap-2">
-                  <span>{activeMovie?.genre || 'Sci-Fi'}</span>
+                <div className="text-xs text-[#707070] mt-1 flex items-center gap-2 truncate">
+                  <span>{activeMovie?.language}</span>
                   <span>&bull;</span>
                   <span className="text-[#FF6500] font-medium flex items-center gap-0.5">
                     <span className="material-symbols-outlined text-[14px]">star</span>
-                    {activeMovie?.imdbRating}
+                    {activeMovie?.ratingLabel || activeMovie?.imdbRating}
                   </span>
                 </div>
               </div>
 
-              {/* Movie Dropdown Menu */}
               {movieOpen && (
                 <div className="absolute left-0 right-0 top-full mt-2 rounded-2xl bg-[#111111] border border-[#222222] shadow-[0_20px_50px_rgba(0,0,0,0.85)] p-2 z-30 animate-fade-in max-h-80 overflow-y-auto">
                   <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#707070]">
-                    Select Movie to Change
+                    Now Showing in {activeCity}
                   </div>
                   {movies.map((m) => (
                     <button
@@ -499,11 +546,15 @@ export const HomePage: React.FC<HomePageProps> = ({
                             <span className="material-symbols-outlined text-[16px] text-[#FF6500]">check</span>
                           )}
                         </div>
-                        <span className="text-[11px] text-[#707070] truncate mt-0.5">{m.genre}</span>
+                        <span className="text-[11px] text-[#707070] truncate mt-0.5">
+                          {m.genre} &bull; {m.language}
+                        </span>
                         <div className="flex items-center gap-2 text-[10px] text-[#A0A0A0] mt-1">
-                          <span>{m.durationMins} mins</span>
+                          <span>{formatRuntime(m.durationMins)}</span>
                           <span>&bull;</span>
-                          <span className="text-[#FF6500] font-semibold">{m.imdbRating} Score</span>
+                          <span className="text-[#FF6500] font-semibold">
+                            {m.ratingLabel || `${m.imdbRating}/10`}
+                          </span>
                         </div>
                       </div>
                     </button>
@@ -525,9 +576,11 @@ export const HomePage: React.FC<HomePageProps> = ({
               <div className="flex flex-col gap-2 flex-1">
                 <div className="flex flex-wrap items-center gap-1.5">
                   <Badge variant="brand" size="sm">
-                    {activeMovie.certification || '12A'}
+                    {activeMovie.certification || 'UA16+'}
                   </Badge>
-                  <span className="text-xs text-[#707070]">{activeMovie.durationMins} mins</span>
+                  <span className="text-xs text-[#707070]">
+                    {formatRuntime(activeMovie.durationMins)} &bull; {activeMovie.language}
+                  </span>
                 </div>
                 <h3 className="text-lg font-bold text-white tracking-tight uppercase">
                   {activeMovie.title}
@@ -535,6 +588,10 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <p className="text-xs text-[#A0A0A0] line-clamp-3 leading-relaxed">
                   {activeMovie.description}
                 </p>
+                <div className="text-[11px] text-[#707070]">
+                  <strong className="text-[#A0A0A0]">Dir:</strong> {activeMovie.director} &bull;{' '}
+                  <strong className="text-[#A0A0A0]">Cast:</strong> {activeMovie.cast.slice(0, 3).join(', ')}
+                </div>
                 <div className="pt-2 flex flex-wrap gap-2">
                   <Button
                     onClick={() => onSelectMovie(activeMovie)}
@@ -542,7 +599,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     size="sm"
                     leftIcon={<span className="material-symbols-outlined text-[16px]">info</span>}
                   >
-                    Movie Details
+                    Full Cast &amp; Details
                   </Button>
                   <Button
                     onClick={() => onOpenTrailer(activeMovie.trailerUrl)}
@@ -550,7 +607,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     size="sm"
                     leftIcon={<span className="material-symbols-outlined text-[16px]">play_arrow</span>}
                   >
-                    Trailer
+                    Preview
                   </Button>
                 </div>
               </div>
@@ -561,14 +618,14 @@ export const HomePage: React.FC<HomePageProps> = ({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#222222] gap-2">
                 <div>
                   <h4 className="text-sm font-semibold text-white uppercase tracking-wider">
-                    Available Showtimes &bull; {activeBranch?.name}
+                    Showtimes &bull; {activeBranch?.name}
                   </h4>
                   <span className="text-xs text-[#707070]">
-                    Select any time slot to configure your seats in the 3D auditorium view
+                    {activeBranch?.address}
                   </span>
                 </div>
                 <span className="text-xs font-semibold text-[#FF6500] px-3 py-1 rounded-full bg-[#FF6500]/10 border border-[#FF6500]/20 self-start sm:self-auto">
-                  Today &bull; 2026-11-05
+                  Today &bull; Nov 11, 2026
                 </span>
               </div>
 
@@ -580,12 +637,14 @@ export const HomePage: React.FC<HomePageProps> = ({
                       key={show.id}
                       className="p-5 rounded-2xl bg-[#161616] border border-[#222222] hover:border-[#FF6500]/50 transition-all flex flex-col justify-between gap-4 group"
                     >
-                      <div className="flex items-start justify-between">
+                      <div className="flex items-start justify-between gap-2">
                         <div className="flex flex-col">
                           <span className="text-2xl font-extrabold text-white group-hover:text-[#FF6500] transition-colors">
-                            {show.startTime}
+                            {show.displayTime || show.startTime}
                           </span>
-                          <span className="text-xs text-[#707070]">Ends {show.endTime}</span>
+                          <span className="text-xs text-[#707070]">
+                            Ends {show.endTime} {show.cancellable !== undefined && (show.cancellable ? '• Cancellable' : '• Non-cancellable')}
+                          </span>
                         </div>
                         <Badge variant="brand" size="sm">
                           {show.screenFormat}
@@ -597,16 +656,18 @@ export const HomePage: React.FC<HomePageProps> = ({
                           <span className="material-symbols-outlined text-[16px] text-[#FF6500]">chair</span>
                           {show.screenName}
                         </span>
-                        <span className="text-[#707070] truncate">{show.audioSpec}</span>
+                        <span className="text-[#707070] truncate">
+                          {show.priceCategories || `${show.audioSpec} • ${show.projectionSpec}`}
+                        </span>
                       </div>
 
                       <div className="pt-3 border-t border-[#222222] flex items-center justify-between">
                         <div>
                           <span className="text-[10px] text-[#707070] uppercase tracking-wider block">
-                            Starting from
+                            Ticket Price
                           </span>
                           <span className="text-sm font-bold text-white">
-                            £{show.pricing.STANDARD.toFixed(2)}
+                            {formatCurrency(show.pricing.STANDARD, show.city)}
                           </span>
                         </div>
                         <Button
@@ -615,38 +676,57 @@ export const HomePage: React.FC<HomePageProps> = ({
                           size="sm"
                           rightIcon={<span className="material-symbols-outlined text-[16px]">arrow_forward</span>}
                         >
-                          Select Seats in 3D
+                          Book Tickets
                         </Button>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                /* Empty state for combination with helpful alternatives */
-                <div className="py-12 px-6 rounded-2xl bg-[#161616] border border-[#222222] flex flex-col items-center text-center gap-4">
+                <div className="py-8 px-6 rounded-2xl bg-[#161616] border border-[#222222] flex flex-col items-center text-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-[#181818] border border-[#222222] flex items-center justify-center text-[#FF6500]">
                     <span className="material-symbols-outlined text-[24px]">schedule</span>
                   </div>
                   <div className="flex flex-col gap-1">
                     <h5 className="text-base font-bold text-white">
-                      No sessions currently scheduled for {activeMovie.title} at this cinema
+                      No sessions for {activeMovie.title} at {activeBranch?.name}
                     </h5>
                     <p className="text-xs text-[#A0A0A0] max-w-md">
-                      Try selecting another movie from the dropdown above, or choose another cinema in {activeCity}.
+                      {altBranchesForMovie.length > 0
+                        ? `${activeMovie.title} is currently playing at these cinemas in ${activeCity}:`
+                        : `Select another movie playing at ${activeBranch?.name}:`}
                     </p>
                   </div>
-                  <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+
+                  {/* Quick Jump to Cinemas Playing This Movie in Selected City */}
+                  {altBranchesForMovie.length > 0 && (
+                    <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1">
+                      {altBranchesForMovie.slice(0, 4).map((altShow) => (
+                        <button
+                          key={altShow.branchId}
+                          onClick={() => handleBranchSelect(altShow.branchId)}
+                          className="px-3.5 py-2 rounded-xl bg-[#181818] hover:bg-[#FF6500] hover:text-white border border-[#222222] text-xs font-semibold text-white transition-all flex items-center gap-2"
+                        >
+                          <span className="material-symbols-outlined text-[15px] text-[#FF6500]">theaters</span>
+                          <span>{altShow.branchName}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Quick Switch Movie */}
+                  <div className="flex flex-wrap items-center justify-center gap-2 pt-2 border-t border-[#222222] w-full">
                     {movies
                       .filter((m) => m.id !== activeMovie.id)
-                      .slice(0, 2)
+                      .slice(0, 3)
                       .map((m) => (
                         <button
                           key={m.id}
                           onClick={() => handleMovieSelect(m.id)}
-                          className="px-3.5 py-2 rounded-xl bg-[#181818] hover:bg-[#202020] border border-[#222222] text-xs font-semibold text-white transition-all flex items-center gap-2"
+                          className="px-3 py-1.5 rounded-lg bg-[#111111] hover:bg-[#181818] border border-[#222222] text-[11px] font-medium text-[#A0A0A0] hover:text-white transition-all flex items-center gap-1.5"
                         >
-                          <span className="material-symbols-outlined text-[16px] text-[#FF6500]">movie</span>
-                          <span>Switch to {m.title}</span>
+                          <span className="material-symbols-outlined text-[14px] text-[#FF6500]">movie</span>
+                          <span>{m.title}</span>
                         </button>
                       ))}
                   </div>
@@ -663,17 +743,17 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="flex flex-col gap-1.5 max-w-xl">
               <span className="text-xs font-semibold text-[#FF6500] uppercase tracking-wider">
-                Now Showing
+                Now Showing &bull; {activeCity}
               </span>
               <h2 className="text-3xl font-bold tracking-tight text-white">The Repertoire</h2>
               <p className="text-sm text-[#A0A0A0]">
-                Curated masterpieces projected in IMAX 70mm, Dolby Vision, and 64-channel spatial sound.
+                Live theatrical listings sourced for {activeCity} cinemas across 3D, 4K RGB Laser, Dolby Atmos, and PLF screens.
               </p>
             </div>
 
             {/* Filter Pills */}
             <div className="flex flex-wrap items-center gap-2">
-              {['All Formats', 'IMAX 70mm', 'Dolby Cinema'].map((fmt) => (
+              {['All Formats', '3D', '2D', 'Dolby', '4DX'].map((fmt) => (
                 <button
                   key={fmt}
                   onClick={() => setFormatFilter(fmt)}
@@ -695,7 +775,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               <MovieCard
                 key={movie.id}
                 movie={movie}
-                shows={shows}
+                shows={shows.filter((s) => s.city.toLowerCase() === activeCity.toLowerCase())}
                 onSelectMovie={onSelectMovie}
                 onBookShow={onBookShow}
               />

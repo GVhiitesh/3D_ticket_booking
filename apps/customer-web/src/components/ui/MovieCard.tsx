@@ -49,7 +49,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           >
             star
           </span>
-          <span>{movie.imdbRating.toFixed(1)}</span>
+          <span>{movie.ratingLabel || movie.imdbRating.toFixed(1)}</span>
         </div>
 
         {/* Hover Quick Action Overlay */}
@@ -91,10 +91,10 @@ export const MovieCard: React.FC<MovieCardProps> = ({
                   onClick={() => onBookShow(show)}
                   className="px-2.5 py-1 rounded-md bg-[#181818] hover:bg-[#FF6500] hover:text-white text-[#A0A0A0] text-xs font-medium border border-[#222222] transition-colors flex items-center gap-1"
                 >
-                  <span>{show.startTime}</span>
-                  {show.screenFormat.includes('IMAX') && (
+                  <span>{show.displayTime || show.startTime}</span>
+                  {(show.screenFormat.includes('3D') || show.screenFormat.includes('IMAX') || show.screenFormat.includes('PLF')) && (
                     <span className="text-[9px] font-bold text-[#FF6500] group-hover:text-white">
-                      IMAX
+                      {show.screenFormat.includes('3D') ? '3D' : show.screenFormat.includes('IMAX') ? 'IMAX' : 'PLF'}
                     </span>
                   )}
                 </button>

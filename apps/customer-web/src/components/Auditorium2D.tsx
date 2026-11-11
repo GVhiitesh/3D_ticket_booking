@@ -1,17 +1,24 @@
 import React from 'react';
 import { SeatNode } from '../types';
+import { formatCurrency } from '../utils/currency';
 
 interface Auditorium2DProps {
   seats: SeatNode[];
   selectedSeatCodes: string[];
   onToggleSeat: (seatCode: string) => void;
   theme?: 'light' | 'dark';
+  city?: string;
+  showFormat?: string;
+  topPrice?: number;
 }
 
 export const Auditorium2D: React.FC<Auditorium2DProps> = ({
   seats,
   selectedSeatCodes,
   onToggleSeat,
+  city,
+  showFormat,
+  topPrice,
 }) => {
   // Ordered rows from Top (A) to Bottom (T)
   const rowOrder = [
@@ -56,7 +63,7 @@ export const Auditorium2D: React.FC<Auditorium2DProps> = ({
         key={seat.seatCode}
         disabled={isBooked || isHeld}
         onClick={() => onToggleSeat(seat.seatCode)}
-        title={`${seat.seatCode} (${seat.section || 'Auditorium'}, ${seat.tier}) - £${seat.price}`}
+        title={`${seat.seatCode} (${seat.section || 'Auditorium'}, ${seat.tier}) - ${formatCurrency(seat.price, city, false)}`}
         className={`w-[26px] h-[26px] sm:w-[28px] sm:h-[28px] shrink-0 rounded-[5px] text-[10px] font-medium flex items-center justify-center transition-all ${btnStyle}`}
       >
         {isWheelchair ? (
@@ -75,7 +82,7 @@ export const Auditorium2D: React.FC<Auditorium2DProps> = ({
         <div className="flex items-center gap-2 px-5 py-1.5 rounded-full border border-[#222222] bg-[#141414] shadow-sm">
           <span className="w-2 h-2 rounded-full bg-[#FF6500]" />
           <span className="text-xs sm:text-sm font-bold tracking-widest uppercase text-white">
-            ₹300 ELITE 3D
+            {formatCurrency(topPrice ?? (seats[0]?.price || 190), city, false)} ELITE {showFormat || '2D'}
           </span>
         </div>
         <div className="w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-[#222222] to-transparent mt-3" />
